@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.UserFavoriteGoodsMapper">
+    
+    <resultMap type="UserFavoriteGoods" id="UserFavoriteGoodsResult">
+        <result property="id"    column="id"    />
+        <result property="sellingGoodsInfoId"    column="selling_goods_info_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="sellingPrice"    column="selling_price"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsDesc"    column="goods_desc"    />
+        <result property="shopInfoId"    column="shop_info_id"    />
+        <result property="shopName"    column="shop_name"    />
+        <association property="goodsNameLang" javaType="langMgr">
+            <result property="zh"    column="category_name"    />
+            <result property="en"    column="category_name_en"    />
+            <result property="tc"    column="category_name_tc"    />
+            <result property="de"    column="category_name_de"    />
+            <result property="es"    column="category_name_es"    />
+            <result property="fr"    column="category_name_fr"    />
+            <result property="idn"    column="category_name_idn"    />
+            <result property="jp"    column="category_name_jp"    />
+            <result property="ko"    column="category_name_ko"    />
+            <result property="my"    column="category_name_my"    />
+            <result property="th"    column="category_name_th"    />
+            <result property="vi"    column="category_name_vi"    />
+            <result property="pt"    column="category_name_pt"    />
+            <result property="rus"    column="category_name_rus"    />
+            <result property="blr"    column="category_name_blr"    />
+            <result property="ida"    column="category_name_ida"    />
+            <result property="sa"    column="category_name_sa"    />
+            <result property="ar"    column="category_name_ar"    />
+            <result property="it"    column="category_name_it"    />
+            <result property="tr"    column="category_name_tr"    />
+        </association>
+        <association property="goodsDescLang" javaType="langMgr">
+            <result property="zh"    column="category_name"    />
+            <result property="en"    column="category_name_en"    />
+            <result property="tc"    column="category_name_tc"    />
+            <result property="de"    column="category_name_de"    />
+            <result property="es"    column="category_name_es"    />
+            <result property="fr"    column="category_name_fr"    />
+            <result property="idn"    column="category_name_idn"    />
+            <result property="jp"    column="category_name_jp"    />
+            <result property="ko"    column="category_name_ko"    />
+            <result property="my"    column="category_name_my"    />
+            <result property="th"    column="category_name_th"    />
+            <result property="vi"    column="category_name_vi"    />
+            <result property="pt"    column="category_name_pt"    />
+            <result property="rus"    column="category_name_rus"    />
+            <result property="blr"    column="category_name_blr"    />
+            <result property="ida"    column="category_name_ida"    />
+            <result property="sa"    column="category_name_sa"    />
+            <result property="ar"    column="category_name_ar"    />
+            <result property="it"    column="category_name_it"    />
+            <result property="tr"    column="category_name_tr"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectUserFavoriteGoodsVo">
+        select a.id, selling_goods_info_id, selling_price, goods_name, goods_img, goods_desc, user_id, a.create_time, goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr, shop_info_id, shop_name
+        from user_favorite_goods a
+                 left join selling_goods_info b
+                           on a.selling_goods_info_id = b.id
+                 left join system_goods_info c
+                           on b.system_goods_info_id = c.id
+                 left join shop_info d
+                           on b.shop_info_id = d.id
+    </sql>
+
+    <select id="selectUserFavoriteGoodsList" parameterType="UserFavoriteGoods" resultMap="UserFavoriteGoodsResult">
+        <include refid="selectUserFavoriteGoodsVo"/>
+        <where>  
+            <if test="sellingGoodsInfoId != null "> and selling_goods_info_id = #{sellingGoodsInfoId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserFavoriteGoodsById" parameterType="Long" resultMap="UserFavoriteGoodsResult">
+        <include refid="selectUserFavoriteGoodsVo"/>
+        where a.id = #{id}
+    </select>
+
+    <select id="getUserFavoriteStatus" resultType="java.lang.Integer">
+        select IFNULL((select id from user_favorite_goods where user_id = #{userId} and selling_goods_info_id = #{sellingGoodsInfoId}),0)
+    </select>
+
+    <insert id="insertUserFavoriteGoods" parameterType="UserFavoriteGoods" useGeneratedKeys="true" keyProperty="id">
+        insert into user_favorite_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sellingGoodsInfoId != null">selling_goods_info_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sellingGoodsInfoId != null">#{sellingGoodsInfoId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserFavoriteGoods" parameterType="UserFavoriteGoods">
+        update user_favorite_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sellingGoodsInfoId != null">selling_goods_info_id = #{sellingGoodsInfoId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserFavoriteGoodsById" parameterType="Long">
+        delete from user_favorite_goods where id = #{id}
+    </delete>
+
+    <delete id="deleteUserFavoriteGoodsByIds" parameterType="String">
+        delete from user_favorite_goods where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

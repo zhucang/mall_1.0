@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SkuAttrValueMapper">
+    
+    <resultMap type="SkuAttrValue" id="SkuAttrValueResult">
+        <result property="skuId"    column="sku_id"    />
+        <result property="attrTypeId"    column="attr_type_id"    />
+        <result property="attrTypeName"    column="attr_type_name"    />
+        <result property="attrValueId"    column="attr_value_id"    />
+        <result property="attrValueName"    column="attr_value_name"    />
+        <association property="attrTypeNameLang" javaType="langMgr">
+            <result property="zh"    column="attr_type_name"    />
+            <result property="en"    column="attr_type_name_en"    />
+            <result property="tc"    column="attr_type_name_tc"    />
+            <result property="de"    column="attr_type_name_de"    />
+            <result property="es"    column="attr_type_name_es"    />
+            <result property="fr"    column="attr_type_name_fr"    />
+            <result property="idn"    column="attr_type_name_idn"    />
+            <result property="jp"    column="attr_type_name_jp"    />
+            <result property="ko"    column="attr_type_name_ko"    />
+            <result property="my"    column="attr_type_name_my"    />
+            <result property="th"    column="attr_type_name_th"    />
+            <result property="vi"    column="attr_type_name_vi"    />
+            <result property="pt"    column="attr_type_name_pt"    />
+            <result property="rus"    column="attr_type_name_rus"    />
+            <result property="blr"    column="attr_type_name_blr"    />
+            <result property="ida"    column="attr_type_name_ida"    />
+            <result property="sa"    column="attr_type_name_sa"    />
+            <result property="ar"    column="attr_type_name_ar"    />
+            <result property="it"    column="attr_type_name_it"    />
+            <result property="tr"    column="attr_type_name_tr"    />
+        </association>
+        <association property="attrValueNameLang" javaType="langMgr">
+            <result property="zh"    column="attr_value_name"    />
+            <result property="en"    column="attr_value_name_en"    />
+            <result property="tc"    column="attr_value_name_tc"    />
+            <result property="de"    column="attr_value_name_de"    />
+            <result property="es"    column="attr_value_name_es"    />
+            <result property="fr"    column="attr_value_name_fr"    />
+            <result property="idn"    column="attr_value_name_idn"    />
+            <result property="jp"    column="attr_value_name_jp"    />
+            <result property="ko"    column="attr_value_name_ko"    />
+            <result property="my"    column="attr_value_name_my"    />
+            <result property="th"    column="attr_value_name_th"    />
+            <result property="vi"    column="attr_value_name_vi"    />
+            <result property="pt"    column="attr_value_name_pt"    />
+            <result property="rus"    column="attr_value_name_rus"    />
+            <result property="blr"    column="attr_value_name_blr"    />
+            <result property="ida"    column="attr_value_name_ida"    />
+            <result property="sa"    column="attr_value_name_sa"    />
+            <result property="ar"    column="attr_value_name_ar"    />
+            <result property="it"    column="attr_value_name_it"    />
+            <result property="tr"    column="attr_value_name_tr"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectSkuAttrValueVo">
+        select sku_id, attr_value_id, attr_type_id, attr_type_name, attr_type_name_en, attr_type_name_tc, attr_type_name_de, attr_type_name_es, attr_type_name_fr, attr_type_name_idn, attr_type_name_jp, attr_type_name_ko, attr_type_name_my, attr_type_name_th, attr_type_name_vi, attr_type_name_pt, attr_type_name_rus, attr_type_name_blr, attr_type_name_ida, attr_type_name_sa, attr_type_name_ar, attr_type_name_it, attr_type_name_tr, attr_value_name, attr_value_name_en, attr_value_name_tc, attr_value_name_de, attr_value_name_es, attr_value_name_fr, attr_value_name_idn, attr_value_name_jp, attr_value_name_ko, attr_value_name_my, attr_value_name_th, attr_value_name_vi, attr_value_name_pt, attr_value_name_rus, attr_value_name_blr, attr_value_name_ida, attr_value_name_sa, attr_value_name_ar, attr_value_name_it, attr_value_name_tr
+        from sku_attr_value a
+                 left join attr_value b
+                           on a.attr_value_id = b.id
+                 left join attr_type c
+                           on b.attr_type_id = c.id
+    </sql>
+
+    <select id="selectSkuAttrValueList" parameterType="SkuAttrValue" resultMap="SkuAttrValueResult">
+        <include refid="selectSkuAttrValueVo"/>
+        <where>
+            <if test="skuId != null"> and sku_id = #{skuId}</if>
+            <if test="params.skuIds != null and params.skuIds.size > 0">
+                and sku_id in
+                <foreach collection="params.skuIds" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.skuIds != null and params.skuIds.size == 0">
+                and sku_id = 0
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectSkuAttrValueBySkuId" parameterType="Long" resultMap="SkuAttrValueResult">
+        <include refid="selectSkuAttrValueVo"/>
+        where sku_id = #{skuId}
+    </select>
+
+    <insert id="insertSkuAttrValue" parameterType="SkuAttrValue">
+        insert into sku_attr_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="skuId != null">sku_id,</if>
+            <if test="attrValueId != null">attr_value_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="skuId != null">#{skuId},</if>
+            <if test="attrValueId != null">#{attrValueId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSkuAttrValue" parameterType="SkuAttrValue">
+        update sku_attr_value
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="attrValueId != null">attr_value_id = #{attrValueId},</if>
+        </trim>
+        where sku_id = #{skuId}
+    </update>
+
+    <delete id="deleteSkuAttrValueBySkuId" parameterType="Long">
+        delete from sku_attr_value where sku_id = #{skuId}
+    </delete>
+
+    <delete id="deleteSkuAttrValueBySkuIds" parameterType="String">
+        delete from sku_attr_value where sku_id in 
+        <foreach item="skuId" collection="array" open="(" separator="," close=")">
+            #{skuId}
+        </foreach>
+    </delete>
+</mapper>

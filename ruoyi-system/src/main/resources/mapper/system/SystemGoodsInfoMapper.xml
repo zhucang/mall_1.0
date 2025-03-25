@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SystemGoodsInfoMapper">
+    
+    <resultMap type="SystemGoodsInfo" id="SystemGoodsInfoResult">
+        <result property="id"    column="id"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsDesc"    column="goods_desc"    />
+        <result property="systemPrice"    column="system_price"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="freightAmount"    column="freight_amount"    />
+        <result property="sort"    column="sort"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <association property="goodsNameLang" javaType="langMgr">
+            <result property="zh"    column="goods_name"    />
+            <result property="en"    column="goods_name_en"    />
+            <result property="tc"    column="goods_name_tc"    />
+            <result property="de"    column="goods_name_de"    />
+            <result property="es"    column="goods_name_es"    />
+            <result property="fr"    column="goods_name_fr"    />
+            <result property="idn"    column="goods_name_idn"    />
+            <result property="jp"    column="goods_name_jp"    />
+            <result property="ko"    column="goods_name_ko"    />
+            <result property="my"    column="goods_name_my"    />
+            <result property="th"    column="goods_name_th"    />
+            <result property="vi"    column="goods_name_vi"    />
+            <result property="pt"    column="goods_name_pt"    />
+            <result property="rus"    column="goods_name_rus"    />
+            <result property="blr"    column="goods_name_blr"    />
+            <result property="ida"    column="goods_name_ida"    />
+            <result property="sa"    column="goods_name_sa"    />
+            <result property="ar"    column="goods_name_ar"    />
+            <result property="it"    column="goods_name_it"    />
+            <result property="tr"    column="goods_name_tr"    />
+        </association>
+        <association property="goodsDescLang" javaType="langMgr">
+            <result property="zh"    column="goods_desc"    />
+            <result property="en"    column="goods_desc_en"    />
+            <result property="tc"    column="goods_desc_tc"    />
+            <result property="de"    column="goods_desc_de"    />
+            <result property="es"    column="goods_desc_es"    />
+            <result property="fr"    column="goods_desc_fr"    />
+            <result property="idn"    column="goods_desc_idn"    />
+            <result property="jp"    column="goods_desc_jp"    />
+            <result property="ko"    column="goods_desc_ko"    />
+            <result property="my"    column="goods_desc_my"    />
+            <result property="th"    column="goods_desc_th"    />
+            <result property="vi"    column="goods_desc_vi"    />
+            <result property="pt"    column="goods_desc_pt"    />
+            <result property="rus"    column="goods_desc_rus"    />
+            <result property="blr"    column="goods_desc_blr"    />
+            <result property="ida"    column="goods_desc_ida"    />
+            <result property="sa"    column="goods_desc_sa"    />
+            <result property="ar"    column="goods_desc_ar"    />
+            <result property="it"    column="goods_desc_it"    />
+            <result property="tr"    column="goods_desc_tr"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectSystemGoodsInfoVo">
+        select a.id, goods_code, goods_name, goods_img, goods_desc, system_price, category_id, category_name, freight_amount, a.sort, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag, goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr
+        from system_goods_info a
+                 left join category b
+                           on a.category_id = b.id
+    </sql>
+
+    <select id="selectSystemGoodsInfoList" parameterType="SystemGoodsInfo" resultMap="SystemGoodsInfoResult">
+        <include refid="selectSystemGoodsInfoVo"/>
+        <where>  
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="categoryId != null "> and category_id in (select id from category where parent_id = #{categoryId} or id = #{categoryId})</if>
+            <if test="params.systemGoodsInfoDelFlag != null ">and a.del_flag = #{params.systemGoodsInfoDelFlag}</if>
+            <if test="params.categoryDelFlag != null ">and b.del_flag = #{params.categoryDelFlag}</if>
+            <if test="params.ids != null and params.ids.size > 0">
+                and a.id in
+                <foreach collection="params.ids" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.ids != null and params.ids.size == 0">
+                and a.id = 0
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectSystemGoodsInfoById" parameterType="Long" resultMap="SystemGoodsInfoResult">
+        <include refid="selectSystemGoodsInfoVo"/>
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertSystemGoodsInfo" parameterType="SystemGoodsInfo">
+        insert into system_goods_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="goodsCode != null and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsImg != null">goods_img,</if>
+            <if test="goodsDesc != null">goods_desc,</if>
+            <if test="systemPrice != null">system_price,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="freightAmount != null">freight_amount,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="goodsCode != null and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsImg != null">#{goodsImg},</if>
+            <if test="goodsDesc != null">#{goodsDesc},</if>
+            <if test="systemPrice != null">#{systemPrice},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="freightAmount != null">#{freightAmount},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemGoodsInfo" parameterType="SystemGoodsInfo">
+        update system_goods_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsCode != null and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsImg != null">goods_img = #{goodsImg},</if>
+            <if test="goodsDesc != null">goods_desc = #{goodsDesc},</if>
+            <if test="systemPrice != null">system_price = #{systemPrice},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="freightAmount != null">freight_amount = #{freightAmount},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="goodsNameLang.zh != null and goodsName == null">goods_name = #{goodsNameLang.zh},</if>
+            <if test="goodsNameLang.en != null">goods_name_en = #{goodsNameLang.en},</if>
+            <if test="goodsNameLang.tc != null">goods_name_tc = #{goodsNameLang.tc},</if>
+            <if test="goodsNameLang.de != null">goods_name_de = #{goodsNameLang.de},</if>
+            <if test="goodsNameLang.es != null">goods_name_es = #{goodsNameLang.es},</if>
+            <if test="goodsNameLang.fr != null">goods_name_fr = #{goodsNameLang.fr},</if>
+            <if test="goodsNameLang.idn != null">goods_name_idn = #{goodsNameLang.idn},</if>
+            <if test="goodsNameLang.jp != null">goods_name_jp = #{goodsNameLang.jp},</if>
+            <if test="goodsNameLang.ko != null">goods_name_ko = #{goodsNameLang.ko},</if>
+            <if test="goodsNameLang.my != null">goods_name_my = #{goodsNameLang.my},</if>
+            <if test="goodsNameLang.th != null">goods_name_th = #{goodsNameLang.th},</if>
+            <if test="goodsNameLang.vi != null">goods_name_vi = #{goodsNameLang.vi},</if>
+            <if test="goodsNameLang.pt != null">goods_name_pt = #{goodsNameLang.pt},</if>
+            <if test="goodsNameLang.rus != null">goods_name_rus = #{goodsNameLang.rus},</if>
+            <if test="goodsNameLang.blr != null">goods_name_blr = #{goodsNameLang.blr},</if>
+            <if test="goodsNameLang.ida != null">goods_name_ida = #{goodsNameLang.ida},</if>
+            <if test="goodsNameLang.sa != null">goods_name_sa = #{goodsNameLang.sa},</if>
+            <if test="goodsNameLang.ar != null">goods_name_ar = #{goodsNameLang.ar},</if>
+            <if test="goodsNameLang.it != null">goods_name_it = #{goodsNameLang.it},</if>
+            <if test="goodsNameLang.tr != null">goods_name_tr = #{goodsNameLang.tr},</if>
+            <if test="goodsDescLang.zh != null and goodsDesc == null">goods_desc = #{goodsDescLang.zh},</if>
+            <if test="goodsDescLang.en != null">goods_desc_en = #{goodsDescLang.en},</if>
+            <if test="goodsDescLang.tc != null">goods_desc_tc = #{goodsDescLang.tc},</if>
+            <if test="goodsDescLang.de != null">goods_desc_de = #{goodsDescLang.de},</if>
+            <if test="goodsDescLang.es != null">goods_desc_es = #{goodsDescLang.es},</if>
+            <if test="goodsDescLang.fr != null">goods_desc_fr = #{goodsDescLang.fr},</if>
+            <if test="goodsDescLang.idn != null">goods_desc_idn = #{goodsDescLang.idn},</if>
+            <if test="goodsDescLang.jp != null">goods_desc_jp = #{goodsDescLang.jp},</if>
+            <if test="goodsDescLang.ko != null">goods_desc_ko = #{goodsDescLang.ko},</if>
+            <if test="goodsDescLang.my != null">goods_desc_my = #{goodsDescLang.my},</if>
+            <if test="goodsDescLang.th != null">goods_desc_th = #{goodsDescLang.th},</if>
+            <if test="goodsDescLang.vi != null">goods_desc_vi = #{goodsDescLang.vi},</if>
+            <if test="goodsDescLang.pt != null">goods_desc_pt = #{goodsDescLang.pt},</if>
+            <if test="goodsDescLang.rus != null">goods_desc_rus = #{goodsDescLang.rus},</if>
+            <if test="goodsDescLang.blr != null">goods_desc_blr = #{goodsDescLang.blr},</if>
+            <if test="goodsDescLang.ida != null">goods_desc_ida = #{goodsDescLang.ida},</if>
+            <if test="goodsDescLang.sa != null">goods_desc_sa = #{goodsDescLang.sa},</if>
+            <if test="goodsDescLang.ar != null">goods_desc_ar = #{goodsDescLang.ar},</if>
+            <if test="goodsDescLang.it != null">goods_desc_it = #{goodsDescLang.it},</if>
+            <if test="goodsDescLang.tr != null">goods_desc_tr = #{goodsDescLang.tr},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSystemGoodsInfoById" parameterType="String">
+        update system_goods_info set del_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteSystemGoodsInfoByIds" parameterType="String">
+        update system_goods_info set del_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

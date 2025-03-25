@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AttrTypeMapper">
+    
+    <resultMap type="AttrType" id="AttrTypeResult">
+        <result property="id"    column="id"    />
+        <result property="attrTypeName"    column="attr_type_name"    />
+        <result property="systemGoodsInfoId"    column="system_goods_info_id"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <association property="attrTypeNameLang" javaType="langMgr">
+            <result property="zh"    column="attr_type_name"    />
+            <result property="en"    column="attr_type_name_en"    />
+            <result property="tc"    column="attr_type_name_tc"    />
+            <result property="de"    column="attr_type_name_de"    />
+            <result property="es"    column="attr_type_name_es"    />
+            <result property="fr"    column="attr_type_name_fr"    />
+            <result property="idn"    column="attr_type_name_idn"    />
+            <result property="jp"    column="attr_type_name_jp"    />
+            <result property="ko"    column="attr_type_name_ko"    />
+            <result property="my"    column="attr_type_name_my"    />
+            <result property="th"    column="attr_type_name_th"    />
+            <result property="vi"    column="attr_type_name_vi"    />
+            <result property="pt"    column="attr_type_name_pt"    />
+            <result property="rus"    column="attr_type_name_rus"    />
+            <result property="blr"    column="attr_type_name_blr"    />
+            <result property="ida"    column="attr_type_name_ida"    />
+            <result property="sa"    column="attr_type_name_sa"    />
+            <result property="ar"    column="attr_type_name_ar"    />
+            <result property="it"    column="attr_type_name_it"    />
+            <result property="tr"    column="attr_type_name_tr"    />
+        </association>
+        <collection property="attrValues" ofType="AttrValue" column="{attrTypeId=id}" select="com.ruoyi.system.mapper.AttrValueMapper.selectAttrValueList"/>
+    </resultMap>
+
+    <sql id="selectAttrTypeVo">
+        select id, attr_type_name, system_goods_info_id, goods_code, status, del_flag, attr_type_name_en, attr_type_name_tc, attr_type_name_de, attr_type_name_es, attr_type_name_fr, attr_type_name_idn, attr_type_name_jp, attr_type_name_ko, attr_type_name_my, attr_type_name_th, attr_type_name_vi, attr_type_name_pt, attr_type_name_rus, attr_type_name_blr, attr_type_name_ida, attr_type_name_sa, attr_type_name_ar, attr_type_name_it, attr_type_name_tr from attr_type
+    </sql>
+
+    <select id="selectAttrTypeList" parameterType="AttrType" resultMap="AttrTypeResult">
+        <include refid="selectAttrTypeVo"/>
+        <where>  
+            <if test="attrTypeName != null  and attrTypeName != ''"> and attr_type_name like concat('%', #{attrTypeName}, '%')</if>
+            <if test="systemGoodsInfoId != null "> and system_goods_info_id = #{systemGoodsInfoId}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="params.systemGoodsInfoIds != null and params.systemGoodsInfoIds.size > 0">
+                and system_goods_info_id in
+                <foreach collection="params.systemGoodsInfoIds" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.systemGoodsInfoIds != null and params.systemGoodsInfoIds.size == 0">
+                and id = 0
+            </if>
+            and del_flag = 0
+        </where>
+    </select>
+    
+    <select id="selectAttrTypeById" parameterType="String" resultMap="AttrTypeResult">
+        <include refid="selectAttrTypeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAttrType" parameterType="AttrType">
+        insert into attr_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="attrTypeName != null">attr_type_name,</if>
+            <if test="systemGoodsInfoId != null">system_goods_info_id,</if>
+            <if test="goodsCode != null">goods_code,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="attrTypeName != null">#{attrTypeName},</if>
+            <if test="systemGoodsInfoId != null">#{systemGoodsInfoId},</if>
+            <if test="goodsCode != null">#{goodsCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttrType" parameterType="AttrType">
+        update attr_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="attrTypeName != null">attr_type_name = #{attrTypeName},</if>
+            <if test="systemGoodsInfoId != null">system_goods_info_id = #{systemGoodsInfoId},</if>
+            <if test="goodsCode != null">goods_code = #{goodsCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="attrTypeNameLang.zh != null and attrTypeName == null">attr_type_name = #{attrTypeNameLang.zh},</if>
+            <if test="attrTypeNameLang.en != null">attr_type_name_en = #{attrTypeNameLang.en},</if>
+            <if test="attrTypeNameLang.tc != null">attr_type_name_tc = #{attrTypeNameLang.tc},</if>
+            <if test="attrTypeNameLang.de != null">attr_type_name_de = #{attrTypeNameLang.de},</if>
+            <if test="attrTypeNameLang.es != null">attr_type_name_es = #{attrTypeNameLang.es},</if>
+            <if test="attrTypeNameLang.fr != null">attr_type_name_fr = #{attrTypeNameLang.fr},</if>
+            <if test="attrTypeNameLang.idn != null">attr_type_name_idn = #{attrTypeNameLang.idn},</if>
+            <if test="attrTypeNameLang.jp != null">attr_type_name_jp = #{attrTypeNameLang.jp},</if>
+            <if test="attrTypeNameLang.ko != null">attr_type_name_ko = #{attrTypeNameLang.ko},</if>
+            <if test="attrTypeNameLang.my != null">attr_type_name_my = #{attrTypeNameLang.my},</if>
+            <if test="attrTypeNameLang.th != null">attr_type_name_th = #{attrTypeNameLang.th},</if>
+            <if test="attrTypeNameLang.vi != null">attr_type_name_vi = #{attrTypeNameLang.vi},</if>
+            <if test="attrTypeNameLang.pt != null">attr_type_name_pt = #{attrTypeNameLang.pt},</if>
+            <if test="attrTypeNameLang.rus != null">attr_type_name_rus = #{attrTypeNameLang.rus},</if>
+            <if test="attrTypeNameLang.blr != null">attr_type_name_blr = #{attrTypeNameLang.blr},</if>
+            <if test="attrTypeNameLang.ida != null">attr_type_name_ida = #{attrTypeNameLang.ida},</if>
+            <if test="attrTypeNameLang.sa != null">attr_type_name_sa = #{attrTypeNameLang.sa},</if>
+            <if test="attrTypeNameLang.ar != null">attr_type_name_ar = #{attrTypeNameLang.ar},</if>
+            <if test="attrTypeNameLang.it != null">attr_type_name_it = #{attrTypeNameLang.it},</if>
+            <if test="attrTypeNameLang.tr != null">attr_type_name_tr = #{attrTypeNameLang.tr},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttrTypeById" parameterType="String">
+        update attr_type set del_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteAttrTypeByIds" parameterType="String">
+        update attr_type set del_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

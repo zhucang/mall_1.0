@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AttrValueMapper">
+    
+    <resultMap type="AttrValue" id="AttrValueResult">
+        <result property="id"    column="id"    />
+        <result property="attrValueName"    column="attr_value_name"    />
+        <result property="attrImg"    column="attr_img"    />
+        <result property="attrImgVisibleFlag"    column="attr_img_visible_flag"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="attrTypeId"    column="attr_type_id"    />
+        <result property="status"    column="status"    />
+        <association property="attrValueNameLang" javaType="langMgr">
+            <result property="zh"    column="attr_value_name"    />
+            <result property="en"    column="attr_value_name_en"    />
+            <result property="tc"    column="attr_value_name_tc"    />
+            <result property="de"    column="attr_value_name_de"    />
+            <result property="es"    column="attr_value_name_es"    />
+            <result property="fr"    column="attr_value_name_fr"    />
+            <result property="idn"    column="attr_value_name_idn"    />
+            <result property="jp"    column="attr_value_name_jp"    />
+            <result property="ko"    column="attr_value_name_ko"    />
+            <result property="my"    column="attr_value_name_my"    />
+            <result property="th"    column="attr_value_name_th"    />
+            <result property="vi"    column="attr_value_name_vi"    />
+            <result property="pt"    column="attr_value_name_pt"    />
+            <result property="rus"    column="attr_value_name_rus"    />
+            <result property="blr"    column="attr_value_name_blr"    />
+            <result property="ida"    column="attr_value_name_ida"    />
+            <result property="sa"    column="attr_value_name_sa"    />
+            <result property="ar"    column="attr_value_name_ar"    />
+            <result property="it"    column="attr_value_name_it"    />
+            <result property="tr"    column="attr_value_name_tr"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectAttrValueVo">
+        select id, attr_value_name, attr_img, attr_img_visible_flag, goods_code, attr_type_id, status, attr_value_name_en, attr_value_name_tc, attr_value_name_de, attr_value_name_es, attr_value_name_fr, attr_value_name_idn, attr_value_name_jp, attr_value_name_ko, attr_value_name_my, attr_value_name_th, attr_value_name_vi, attr_value_name_pt, attr_value_name_rus, attr_value_name_blr, attr_value_name_ida, attr_value_name_sa, attr_value_name_ar, attr_value_name_it, attr_value_name_tr from attr_value
+    </sql>
+
+    <select id="selectAttrValueList" parameterType="AttrValue" resultMap="AttrValueResult">
+        <include refid="selectAttrValueVo"/>
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="attrValueName != null  and attrValueName != ''"> and attr_value_name like concat('%', #{attrValueName}, '%')</if>
+            <if test="attrImg != null  and attrImg != ''"> and attr_img = #{attrImg}</if>
+            <if test="attrImgVisibleFlag != null "> and attr_img_visible_flag = #{attrImgVisibleFlag}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="attrTypeId != null  and attrTypeId != ''"> and attr_type_id = #{attrTypeId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="params.attrTypeIds != null and params.attrTypeIds.size > 0">
+                and attr_type_id in
+                <foreach collection="params.attrTypeIds" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.attrTypeIds != null and params.attrTypeIds.size == 0">
+                and id = 0
+            </if>
+            <if test="params.ids != null and params.ids.size > 0">
+                and id in
+                <foreach collection="params.ids" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.ids != null and params.ids.size == 0">
+                and id = 0
+            </if>
+             and del_flag = 0
+        </where>
+    </select>
+    
+    <select id="selectAttrValueById" parameterType="String" resultMap="AttrValueResult">
+        <include refid="selectAttrValueVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAttrValue" parameterType="AttrValue">
+        insert into attr_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="attrValueName != null">attr_value_name,</if>
+            <if test="attrImg != null">attr_img,</if>
+            <if test="attrImgVisibleFlag != null">attr_img_visible_flag,</if>
+            <if test="goodsCode != null">goods_code,</if>
+            <if test="attrTypeId != null and attrTypeId != ''">attr_type_id,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="attrValueName != null">#{attrValueName},</if>
+            <if test="attrImg != null">#{attrImg},</if>
+            <if test="attrImgVisibleFlag != null">#{attrImgVisibleFlag},</if>
+            <if test="goodsCode != null">#{goodsCode},</if>
+            <if test="attrTypeId != null and attrTypeId != ''">#{attrTypeId},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttrValue" parameterType="AttrValue">
+        update attr_value
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="attrValueName != null">attr_value_name = #{attrValueName},</if>
+            <if test="attrImg != null">attr_img = #{attrImg},</if>
+            <if test="attrImgVisibleFlag != null">attr_img_visible_flag = #{attrImgVisibleFlag},</if>
+            <if test="goodsCode != null">goods_code = #{goodsCode},</if>
+            <if test="attrTypeId != null and attrTypeId != ''">attr_type_id = #{attrTypeId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="attrValueNameLang.zh != null and attrValueName == null">attr_value_name = #{attrValueNameLang.zh},</if>
+            <if test="attrValueNameLang.en != null">attr_value_name_en = #{attrValueNameLang.en},</if>
+            <if test="attrValueNameLang.tc != null">attr_value_name_tc = #{attrValueNameLang.tc},</if>
+            <if test="attrValueNameLang.de != null">attr_value_name_de = #{attrValueNameLang.de},</if>
+            <if test="attrValueNameLang.es != null">attr_value_name_es = #{attrValueNameLang.es},</if>
+            <if test="attrValueNameLang.fr != null">attr_value_name_fr = #{attrValueNameLang.fr},</if>
+            <if test="attrValueNameLang.idn != null">attr_value_name_idn = #{attrValueNameLang.idn},</if>
+            <if test="attrValueNameLang.jp != null">attr_value_name_jp = #{attrValueNameLang.jp},</if>
+            <if test="attrValueNameLang.ko != null">attr_value_name_ko = #{attrValueNameLang.ko},</if>
+            <if test="attrValueNameLang.my != null">attr_value_name_my = #{attrValueNameLang.my},</if>
+            <if test="attrValueNameLang.th != null">attr_value_name_th = #{attrValueNameLang.th},</if>
+            <if test="attrValueNameLang.vi != null">attr_value_name_vi = #{attrValueNameLang.vi},</if>
+            <if test="attrValueNameLang.pt != null">attr_value_name_pt = #{attrValueNameLang.pt},</if>
+            <if test="attrValueNameLang.rus != null">attr_value_name_rus = #{attrValueNameLang.rus},</if>
+            <if test="attrValueNameLang.blr != null">attr_value_name_blr = #{attrValueNameLang.blr},</if>
+            <if test="attrValueNameLang.ida != null">attr_value_name_ida = #{attrValueNameLang.ida},</if>
+            <if test="attrValueNameLang.sa != null">attr_value_name_sa = #{attrValueNameLang.sa},</if>
+            <if test="attrValueNameLang.ar != null">attr_value_name_ar = #{attrValueNameLang.ar},</if>
+            <if test="attrValueNameLang.it != null">attr_value_name_it = #{attrValueNameLang.it},</if>
+            <if test="attrValueNameLang.tr != null">attr_value_name_tr = #{attrValueNameLang.tr},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttrValueById" parameterType="String">
+        update attr_value set del_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteAttrValueByIds" parameterType="String">
+        update attr_value set del_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

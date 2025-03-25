@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SkuMapper">
+    
+    <resultMap type="Sku" id="SkuResult">
+        <result property="id"    column="id"    />
+        <result property="systemGoodsInfoId"    column="system_goods_info_id"    />
+        <result property="attrValueId"    column="attr_value_id"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="systemPrice"    column="system_price"    />
+        <result property="skuImgs"    column="sku_imgs"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSkuVo">
+        select id, system_goods_info_id, attr_value_id, goods_price, system_price, sku_imgs, del_flag, create_by, create_time, update_by, update_time, remark from sku
+    </sql>
+
+    <select id="selectSkuList" parameterType="Sku" resultMap="SkuResult">
+        <include refid="selectSkuVo"/>
+        <where>  
+            <if test="systemGoodsInfoId != null "> and system_goods_info_id = #{systemGoodsInfoId}</if>
+            <if test="attrValueId != null  and attrValueId != ''"> and attr_value_id = #{attrValueId}</if>
+            <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
+            <if test="systemPrice != null "> and system_price = #{systemPrice}</if>
+            <if test="skuImgs != null  and skuImgs != ''"> and sku_imgs = #{skuImgs}</if>
+            <if test="params.systemGoodsInfoIds != null and params.systemGoodsInfoIds.size > 0">
+                and system_goods_info_id in
+                <foreach collection="params.systemGoodsInfoIds" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.systemGoodsInfoIds != null and params.systemGoodsInfoIds.size == 0">
+                and id = 0
+            </if>
+             and del_flag = 0
+        </where>
+    </select>
+    
+    <select id="selectSkuById" parameterType="Long" resultMap="SkuResult">
+        <include refid="selectSkuVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSku" parameterType="Sku" useGeneratedKeys="true" keyProperty="id">
+        insert into sku
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="systemGoodsInfoId != null">system_goods_info_id,</if>
+            <if test="attrValueId != null">attr_value_id,</if>
+            <if test="goodsPrice != null">goods_price,</if>
+            <if test="systemPrice != null">system_price,</if>
+            <if test="skuImgs != null">sku_imgs,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="systemGoodsInfoId != null">#{systemGoodsInfoId},</if>
+            <if test="attrValueId != null">#{attrValueId},</if>
+            <if test="goodsPrice != null">#{goodsPrice},</if>
+            <if test="systemPrice != null">#{systemPrice},</if>
+            <if test="skuImgs != null">#{skuImgs},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertSku2">
+        insert into sku_attr_value (sku_id, attr_value_id) values (#{params.id1},#{params.id2})
+    </insert>
+
+    <update id="updateSku" parameterType="Sku">
+        update sku
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="systemGoodsInfoId != null">system_goods_info_id = #{systemGoodsInfoId},</if>
+            <if test="attrValueId != null">attr_value_id = #{attrValueId},</if>
+            <if test="goodsPrice != null">goods_price = #{goodsPrice},</if>
+            <if test="systemPrice != null">system_price = #{systemPrice},</if>
+            <if test="skuImgs != null">sku_imgs = #{skuImgs},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSkuById" parameterType="Long">
+        update sku set del_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteSkuByIds" parameterType="String">
+        update sku set del_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

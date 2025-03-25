@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.UserFavoriteShopMapper">
+    
+    <resultMap type="UserFavoriteShop" id="UserFavoriteShopResult">
+        <result property="id"    column="id"    />
+        <result property="shopInfoId"    column="shop_info_id"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="shopImg"    column="shop_img"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectUserFavoriteShopVo">
+        select a.id, shop_info_id, shop_name, shop_img, user_id, a.create_time
+        from user_favorite_shop a
+                 left join shop_info b
+                           on  a.shop_info_id = b.id
+    </sql>
+
+    <select id="selectUserFavoriteShopList" parameterType="UserFavoriteShop" resultMap="UserFavoriteShopResult">
+        <include refid="selectUserFavoriteShopVo"/>
+        <where>  
+            <if test="shopInfoId != null "> and shop_info_id = #{shopInfoId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserFavoriteShopById" parameterType="Long" resultMap="UserFavoriteShopResult">
+        <include refid="selectUserFavoriteShopVo"/>
+        where a.id = #{id}
+    </select>
+
+    <select id="getUserFavoriteStatus" resultType="java.lang.Integer">
+        select IFNULL((select id from user_favorite_shop where user_id = #{userId} and shop_info_id = #{shopInfoId}),0)
+    </select>
+
+    <insert id="insertUserFavoriteShop" parameterType="UserFavoriteShop" useGeneratedKeys="true" keyProperty="id">
+        insert into user_favorite_shop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopInfoId != null">shop_info_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopInfoId != null">#{shopInfoId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserFavoriteShop" parameterType="UserFavoriteShop">
+        update user_favorite_shop
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopInfoId != null">shop_info_id = #{shopInfoId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserFavoriteShopById" parameterType="Long">
+        delete from user_favorite_shop where id = #{id}
+    </delete>
+
+    <delete id="deleteUserFavoriteShopByIds" parameterType="String">
+        delete from user_favorite_shop where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

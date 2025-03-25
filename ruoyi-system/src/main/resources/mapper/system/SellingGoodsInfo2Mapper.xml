@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SellingGoodsInfo2Mapper">
+    
+    <resultMap type="SellingGoodsInfo2" id="SellingGoodsInfo2Result">
+        <result property="id"    column="id"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsDesc"    column="goods_desc"    />
+        <result property="sellingPrice"    column="selling_price"    />
+        <result property="systemPrice"    column="system_price"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="freightAmount"    column="freight_amount"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="sort"    column="sort"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="goodsNameEn"    column="goods_name_en"    />
+        <result property="goodsNameTc"    column="goods_name_tc"    />
+        <result property="goodsNameDe"    column="goods_name_de"    />
+        <result property="goodsNameEs"    column="goods_name_es"    />
+        <result property="goodsNameFr"    column="goods_name_fr"    />
+        <result property="goodsNameIdn"    column="goods_name_idn"    />
+        <result property="goodsNameJp"    column="goods_name_jp"    />
+        <result property="goodsNameKo"    column="goods_name_ko"    />
+        <result property="goodsNameMy"    column="goods_name_my"    />
+        <result property="goodsNameTh"    column="goods_name_th"    />
+        <result property="goodsNameVi"    column="goods_name_vi"    />
+        <result property="goodsNamePt"    column="goods_name_pt"    />
+        <result property="goodsNameRus"    column="goods_name_rus"    />
+        <result property="goodsNameBlr"    column="goods_name_blr"    />
+        <result property="goodsNameIda"    column="goods_name_ida"    />
+        <result property="goodsNameSa"    column="goods_name_sa"    />
+        <result property="goodsNameAr"    column="goods_name_ar"    />
+        <result property="goodsNameIt"    column="goods_name_it"    />
+        <result property="goodsNameTr"    column="goods_name_tr"    />
+        <result property="goodsDescEn"    column="goods_desc_en"    />
+        <result property="goodsDescTc"    column="goods_desc_tc"    />
+        <result property="goodsDescDe"    column="goods_desc_de"    />
+        <result property="goodsDescEs"    column="goods_desc_es"    />
+        <result property="goodsDescFr"    column="goods_desc_fr"    />
+        <result property="goodsDescIdn"    column="goods_desc_idn"    />
+        <result property="goodsDescJp"    column="goods_desc_jp"    />
+        <result property="goodsDescKo"    column="goods_desc_ko"    />
+        <result property="goodsDescMy"    column="goods_desc_my"    />
+        <result property="goodsDescTh"    column="goods_desc_th"    />
+        <result property="goodsDescVi"    column="goods_desc_vi"    />
+        <result property="goodsDescPt"    column="goods_desc_pt"    />
+        <result property="goodsDescRus"    column="goods_desc_rus"    />
+        <result property="goodsDescBlr"    column="goods_desc_blr"    />
+        <result property="goodsDescIda"    column="goods_desc_ida"    />
+        <result property="goodsDescSa"    column="goods_desc_sa"    />
+        <result property="goodsDescAr"    column="goods_desc_ar"    />
+        <result property="goodsDescIt"    column="goods_desc_it"    />
+        <result property="goodsDescTr"    column="goods_desc_tr"    />
+    </resultMap>
+
+    <sql id="selectSellingGoodsInfo2Vo">
+        select id, goods_code, goods_name, goods_img, goods_desc, selling_price, system_price, category_id, freight_amount, seller_id, sort, create_by, create_time, update_by, update_time, remark, del_flag, goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr from selling_goods_info2
+    </sql>
+
+    <select id="selectSellingGoodsInfo2List" parameterType="SellingGoodsInfo2" resultMap="SellingGoodsInfo2Result">
+        <include refid="selectSellingGoodsInfo2Vo"/>
+        <where>  
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsImg != null  and goodsImg != ''"> and goods_img = #{goodsImg}</if>
+            <if test="goodsDesc != null  and goodsDesc != ''"> and goods_desc = #{goodsDesc}</if>
+            <if test="sellingPrice != null "> and selling_price = #{sellingPrice}</if>
+            <if test="systemPrice != null "> and system_price = #{systemPrice}</if>
+            <if test="categoryId != null  and categoryId != ''"> and category_id = #{categoryId}</if>
+            <if test="freightAmount != null "> and freight_amount = #{freightAmount}</if>
+            <if test="sellerId != null  and sellerId != ''"> and seller_id = #{sellerId}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="goodsNameEn != null  and goodsNameEn != ''"> and goods_name_en = #{goodsNameEn}</if>
+            <if test="goodsNameTc != null  and goodsNameTc != ''"> and goods_name_tc = #{goodsNameTc}</if>
+            <if test="goodsNameDe != null  and goodsNameDe != ''"> and goods_name_de = #{goodsNameDe}</if>
+            <if test="goodsNameEs != null  and goodsNameEs != ''"> and goods_name_es = #{goodsNameEs}</if>
+            <if test="goodsNameFr != null  and goodsNameFr != ''"> and goods_name_fr = #{goodsNameFr}</if>
+            <if test="goodsNameIdn != null  and goodsNameIdn != ''"> and goods_name_idn = #{goodsNameIdn}</if>
+            <if test="goodsNameJp != null  and goodsNameJp != ''"> and goods_name_jp = #{goodsNameJp}</if>
+            <if test="goodsNameKo != null  and goodsNameKo != ''"> and goods_name_ko = #{goodsNameKo}</if>
+            <if test="goodsNameMy != null  and goodsNameMy != ''"> and goods_name_my = #{goodsNameMy}</if>
+            <if test="goodsNameTh != null  and goodsNameTh != ''"> and goods_name_th = #{goodsNameTh}</if>
+            <if test="goodsNameVi != null  and goodsNameVi != ''"> and goods_name_vi = #{goodsNameVi}</if>
+            <if test="goodsNamePt != null  and goodsNamePt != ''"> and goods_name_pt = #{goodsNamePt}</if>
+            <if test="goodsNameRus != null  and goodsNameRus != ''"> and goods_name_rus = #{goodsNameRus}</if>
+            <if test="goodsNameBlr != null  and goodsNameBlr != ''"> and goods_name_blr = #{goodsNameBlr}</if>
+            <if test="goodsNameIda != null  and goodsNameIda != ''"> and goods_name_ida = #{goodsNameIda}</if>
+            <if test="goodsNameSa != null  and goodsNameSa != ''"> and goods_name_sa = #{goodsNameSa}</if>
+            <if test="goodsNameAr != null  and goodsNameAr != ''"> and goods_name_ar = #{goodsNameAr}</if>
+            <if test="goodsNameIt != null  and goodsNameIt != ''"> and goods_name_it = #{goodsNameIt}</if>
+            <if test="goodsNameTr != null  and goodsNameTr != ''"> and goods_name_tr = #{goodsNameTr}</if>
+            <if test="goodsDescEn != null  and goodsDescEn != ''"> and goods_desc_en = #{goodsDescEn}</if>
+            <if test="goodsDescTc != null  and goodsDescTc != ''"> and goods_desc_tc = #{goodsDescTc}</if>
+            <if test="goodsDescDe != null  and goodsDescDe != ''"> and goods_desc_de = #{goodsDescDe}</if>
+            <if test="goodsDescEs != null  and goodsDescEs != ''"> and goods_desc_es = #{goodsDescEs}</if>
+            <if test="goodsDescFr != null  and goodsDescFr != ''"> and goods_desc_fr = #{goodsDescFr}</if>
+            <if test="goodsDescIdn != null  and goodsDescIdn != ''"> and goods_desc_idn = #{goodsDescIdn}</if>
+            <if test="goodsDescJp != null  and goodsDescJp != ''"> and goods_desc_jp = #{goodsDescJp}</if>
+            <if test="goodsDescKo != null  and goodsDescKo != ''"> and goods_desc_ko = #{goodsDescKo}</if>
+            <if test="goodsDescMy != null  and goodsDescMy != ''"> and goods_desc_my = #{goodsDescMy}</if>
+            <if test="goodsDescTh != null  and goodsDescTh != ''"> and goods_desc_th = #{goodsDescTh}</if>
+            <if test="goodsDescVi != null  and goodsDescVi != ''"> and goods_desc_vi = #{goodsDescVi}</if>
+            <if test="goodsDescPt != null  and goodsDescPt != ''"> and goods_desc_pt = #{goodsDescPt}</if>
+            <if test="goodsDescRus != null  and goodsDescRus != ''"> and goods_desc_rus = #{goodsDescRus}</if>
+            <if test="goodsDescBlr != null  and goodsDescBlr != ''"> and goods_desc_blr = #{goodsDescBlr}</if>
+            <if test="goodsDescIda != null  and goodsDescIda != ''"> and goods_desc_ida = #{goodsDescIda}</if>
+            <if test="goodsDescSa != null  and goodsDescSa != ''"> and goods_desc_sa = #{goodsDescSa}</if>
+            <if test="goodsDescAr != null  and goodsDescAr != ''"> and goods_desc_ar = #{goodsDescAr}</if>
+            <if test="goodsDescIt != null  and goodsDescIt != ''"> and goods_desc_it = #{goodsDescIt}</if>
+            <if test="goodsDescTr != null  and goodsDescTr != ''"> and goods_desc_tr = #{goodsDescTr}</if>
+        </where>
+    </select>
+    
+    <select id="selectSellingGoodsInfo2ById" parameterType="Long" resultMap="SellingGoodsInfo2Result">
+        <include refid="selectSellingGoodsInfo2Vo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSellingGoodsInfo2" parameterType="SellingGoodsInfo2" useGeneratedKeys="true" keyProperty="id">
+        insert into selling_goods_info2
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsCode != null and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsImg != null">goods_img,</if>
+            <if test="goodsDesc != null">goods_desc,</if>
+            <if test="sellingPrice != null">selling_price,</if>
+            <if test="systemPrice != null">system_price,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="freightAmount != null">freight_amount,</if>
+            <if test="sellerId != null">seller_id,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="goodsNameEn != null">goods_name_en,</if>
+            <if test="goodsNameTc != null">goods_name_tc,</if>
+            <if test="goodsNameDe != null">goods_name_de,</if>
+            <if test="goodsNameEs != null">goods_name_es,</if>
+            <if test="goodsNameFr != null">goods_name_fr,</if>
+            <if test="goodsNameIdn != null">goods_name_idn,</if>
+            <if test="goodsNameJp != null">goods_name_jp,</if>
+            <if test="goodsNameKo != null">goods_name_ko,</if>
+            <if test="goodsNameMy != null">goods_name_my,</if>
+            <if test="goodsNameTh != null">goods_name_th,</if>
+            <if test="goodsNameVi != null">goods_name_vi,</if>
+            <if test="goodsNamePt != null">goods_name_pt,</if>
+            <if test="goodsNameRus != null">goods_name_rus,</if>
+            <if test="goodsNameBlr != null">goods_name_blr,</if>
+            <if test="goodsNameIda != null">goods_name_ida,</if>
+            <if test="goodsNameSa != null">goods_name_sa,</if>
+            <if test="goodsNameAr != null">goods_name_ar,</if>
+            <if test="goodsNameIt != null">goods_name_it,</if>
+            <if test="goodsNameTr != null">goods_name_tr,</if>
+            <if test="goodsDescEn != null">goods_desc_en,</if>
+            <if test="goodsDescTc != null">goods_desc_tc,</if>
+            <if test="goodsDescDe != null">goods_desc_de,</if>
+            <if test="goodsDescEs != null">goods_desc_es,</if>
+            <if test="goodsDescFr != null">goods_desc_fr,</if>
+            <if test="goodsDescIdn != null">goods_desc_idn,</if>
+            <if test="goodsDescJp != null">goods_desc_jp,</if>
+            <if test="goodsDescKo != null">goods_desc_ko,</if>
+            <if test="goodsDescMy != null">goods_desc_my,</if>
+            <if test="goodsDescTh != null">goods_desc_th,</if>
+            <if test="goodsDescVi != null">goods_desc_vi,</if>
+            <if test="goodsDescPt != null">goods_desc_pt,</if>
+            <if test="goodsDescRus != null">goods_desc_rus,</if>
+            <if test="goodsDescBlr != null">goods_desc_blr,</if>
+            <if test="goodsDescIda != null">goods_desc_ida,</if>
+            <if test="goodsDescSa != null">goods_desc_sa,</if>
+            <if test="goodsDescAr != null">goods_desc_ar,</if>
+            <if test="goodsDescIt != null">goods_desc_it,</if>
+            <if test="goodsDescTr != null">goods_desc_tr,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsCode != null and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsImg != null">#{goodsImg},</if>
+            <if test="goodsDesc != null">#{goodsDesc},</if>
+            <if test="sellingPrice != null">#{sellingPrice},</if>
+            <if test="systemPrice != null">#{systemPrice},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="freightAmount != null">#{freightAmount},</if>
+            <if test="sellerId != null">#{sellerId},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="goodsNameEn != null">#{goodsNameEn},</if>
+            <if test="goodsNameTc != null">#{goodsNameTc},</if>
+            <if test="goodsNameDe != null">#{goodsNameDe},</if>
+            <if test="goodsNameEs != null">#{goodsNameEs},</if>
+            <if test="goodsNameFr != null">#{goodsNameFr},</if>
+            <if test="goodsNameIdn != null">#{goodsNameIdn},</if>
+            <if test="goodsNameJp != null">#{goodsNameJp},</if>
+            <if test="goodsNameKo != null">#{goodsNameKo},</if>
+            <if test="goodsNameMy != null">#{goodsNameMy},</if>
+            <if test="goodsNameTh != null">#{goodsNameTh},</if>
+            <if test="goodsNameVi != null">#{goodsNameVi},</if>
+            <if test="goodsNamePt != null">#{goodsNamePt},</if>
+            <if test="goodsNameRus != null">#{goodsNameRus},</if>
+            <if test="goodsNameBlr != null">#{goodsNameBlr},</if>
+            <if test="goodsNameIda != null">#{goodsNameIda},</if>
+            <if test="goodsNameSa != null">#{goodsNameSa},</if>
+            <if test="goodsNameAr != null">#{goodsNameAr},</if>
+            <if test="goodsNameIt != null">#{goodsNameIt},</if>
+            <if test="goodsNameTr != null">#{goodsNameTr},</if>
+            <if test="goodsDescEn != null">#{goodsDescEn},</if>
+            <if test="goodsDescTc != null">#{goodsDescTc},</if>
+            <if test="goodsDescDe != null">#{goodsDescDe},</if>
+            <if test="goodsDescEs != null">#{goodsDescEs},</if>
+            <if test="goodsDescFr != null">#{goodsDescFr},</if>
+            <if test="goodsDescIdn != null">#{goodsDescIdn},</if>
+            <if test="goodsDescJp != null">#{goodsDescJp},</if>
+            <if test="goodsDescKo != null">#{goodsDescKo},</if>
+            <if test="goodsDescMy != null">#{goodsDescMy},</if>
+            <if test="goodsDescTh != null">#{goodsDescTh},</if>
+            <if test="goodsDescVi != null">#{goodsDescVi},</if>
+            <if test="goodsDescPt != null">#{goodsDescPt},</if>
+            <if test="goodsDescRus != null">#{goodsDescRus},</if>
+            <if test="goodsDescBlr != null">#{goodsDescBlr},</if>
+            <if test="goodsDescIda != null">#{goodsDescIda},</if>
+            <if test="goodsDescSa != null">#{goodsDescSa},</if>
+            <if test="goodsDescAr != null">#{goodsDescAr},</if>
+            <if test="goodsDescIt != null">#{goodsDescIt},</if>
+            <if test="goodsDescTr != null">#{goodsDescTr},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertSellingGoodsInfo2s">
+        insert into selling_goods_info2
+            (id,goods_code,goods_name,goods_name_en,goods_img,goods_desc,selling_price,system_price,category_id,freight_amount,seller_id)
+        <foreach collection="sellingGoodsInfo2s" item="item" index="index" open="values(" separator="),(" close=")" nullable="true">
+            #{item.id}, #{item.goodsCode}, #{item.goodsName},#{item.goodsNameEn}, #{item.goodsImg}, #{item.goodsDesc},
+            #{item.sellingPrice}, #{item.systemPrice}, #{item.categoryId}, #{item.freightAmount}, #{item.sellerId}
+        </foreach>
+    </insert>
+
+    <update id="updateSellingGoodsInfo2" parameterType="SellingGoodsInfo2">
+        update selling_goods_info2
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsCode != null and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsImg != null">goods_img = #{goodsImg},</if>
+            <if test="goodsDesc != null">goods_desc = #{goodsDesc},</if>
+            <if test="sellingPrice != null">selling_price = #{sellingPrice},</if>
+            <if test="systemPrice != null">system_price = #{systemPrice},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="freightAmount != null">freight_amount = #{freightAmount},</if>
+            <if test="sellerId != null">seller_id = #{sellerId},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="goodsNameEn != null">goods_name_en = #{goodsNameEn},</if>
+            <if test="goodsNameTc != null">goods_name_tc = #{goodsNameTc},</if>
+            <if test="goodsNameDe != null">goods_name_de = #{goodsNameDe},</if>
+            <if test="goodsNameEs != null">goods_name_es = #{goodsNameEs},</if>
+            <if test="goodsNameFr != null">goods_name_fr = #{goodsNameFr},</if>
+            <if test="goodsNameIdn != null">goods_name_idn = #{goodsNameIdn},</if>
+            <if test="goodsNameJp != null">goods_name_jp = #{goodsNameJp},</if>
+            <if test="goodsNameKo != null">goods_name_ko = #{goodsNameKo},</if>
+            <if test="goodsNameMy != null">goods_name_my = #{goodsNameMy},</if>
+            <if test="goodsNameTh != null">goods_name_th = #{goodsNameTh},</if>
+            <if test="goodsNameVi != null">goods_name_vi = #{goodsNameVi},</if>
+            <if test="goodsNamePt != null">goods_name_pt = #{goodsNamePt},</if>
+            <if test="goodsNameRus != null">goods_name_rus = #{goodsNameRus},</if>
+            <if test="goodsNameBlr != null">goods_name_blr = #{goodsNameBlr},</if>
+            <if test="goodsNameIda != null">goods_name_ida = #{goodsNameIda},</if>
+            <if test="goodsNameSa != null">goods_name_sa = #{goodsNameSa},</if>
+            <if test="goodsNameAr != null">goods_name_ar = #{goodsNameAr},</if>
+            <if test="goodsNameIt != null">goods_name_it = #{goodsNameIt},</if>
+            <if test="goodsNameTr != null">goods_name_tr = #{goodsNameTr},</if>
+            <if test="goodsDescEn != null">goods_desc_en = #{goodsDescEn},</if>
+            <if test="goodsDescTc != null">goods_desc_tc = #{goodsDescTc},</if>
+            <if test="goodsDescDe != null">goods_desc_de = #{goodsDescDe},</if>
+            <if test="goodsDescEs != null">goods_desc_es = #{goodsDescEs},</if>
+            <if test="goodsDescFr != null">goods_desc_fr = #{goodsDescFr},</if>
+            <if test="goodsDescIdn != null">goods_desc_idn = #{goodsDescIdn},</if>
+            <if test="goodsDescJp != null">goods_desc_jp = #{goodsDescJp},</if>
+            <if test="goodsDescKo != null">goods_desc_ko = #{goodsDescKo},</if>
+            <if test="goodsDescMy != null">goods_desc_my = #{goodsDescMy},</if>
+            <if test="goodsDescTh != null">goods_desc_th = #{goodsDescTh},</if>
+            <if test="goodsDescVi != null">goods_desc_vi = #{goodsDescVi},</if>
+            <if test="goodsDescPt != null">goods_desc_pt = #{goodsDescPt},</if>
+            <if test="goodsDescRus != null">goods_desc_rus = #{goodsDescRus},</if>
+            <if test="goodsDescBlr != null">goods_desc_blr = #{goodsDescBlr},</if>
+            <if test="goodsDescIda != null">goods_desc_ida = #{goodsDescIda},</if>
+            <if test="goodsDescSa != null">goods_desc_sa = #{goodsDescSa},</if>
+            <if test="goodsDescAr != null">goods_desc_ar = #{goodsDescAr},</if>
+            <if test="goodsDescIt != null">goods_desc_it = #{goodsDescIt},</if>
+            <if test="goodsDescTr != null">goods_desc_tr = #{goodsDescTr},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSellingGoodsInfo2ById" parameterType="Long">
+        delete from selling_goods_info2 where id = #{id}
+    </delete>
+
+    <delete id="deleteSellingGoodsInfo2ByIds" parameterType="String">
+        delete from selling_goods_info2 where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

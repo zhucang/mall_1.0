@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CategoryMapper">
+    
+    <resultMap type="Category" id="CategoryResult">
+        <result property="id"    column="id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="categoryImg"    column="category_img"    />
+        <result property="categoryLevel"    column="category_level"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="visibleFlag"    column="visible_flag"    />
+        <result property="sort"    column="sort"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <association property="categoryNameLang" javaType="langMgr">
+            <result property="zh"    column="category_name"    />
+            <result property="en"    column="category_name_en"    />
+            <result property="tc"    column="category_name_tc"    />
+            <result property="de"    column="category_name_de"    />
+            <result property="es"    column="category_name_es"    />
+            <result property="fr"    column="category_name_fr"    />
+            <result property="idn"    column="category_name_idn"    />
+            <result property="jp"    column="category_name_jp"    />
+            <result property="ko"    column="category_name_ko"    />
+            <result property="my"    column="category_name_my"    />
+            <result property="th"    column="category_name_th"    />
+            <result property="vi"    column="category_name_vi"    />
+            <result property="pt"    column="category_name_pt"    />
+            <result property="rus"    column="category_name_rus"    />
+            <result property="blr"    column="category_name_blr"    />
+            <result property="ida"    column="category_name_ida"    />
+            <result property="sa"    column="category_name_sa"    />
+            <result property="ar"    column="category_name_ar"    />
+            <result property="it"    column="category_name_it"    />
+            <result property="tr"    column="category_name_tr"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectCategoryVo">
+        select id, category_name, category_img, category_level, parent_id, visible_flag, sort, create_by, create_time, update_by, update_time, remark, del_flag, category_name_en, category_name_tc, category_name_de, category_name_es, category_name_fr, category_name_idn, category_name_jp, category_name_ko, category_name_my, category_name_th, category_name_vi, category_name_pt, category_name_rus, category_name_blr, category_name_ida, category_name_sa, category_name_ar, category_name_it, category_name_tr from category
+    </sql>
+
+    <select id="selectCategoryList" parameterType="Category" resultMap="CategoryResult">
+        <include refid="selectCategoryVo"/>
+        <where>  
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="categoryImg != null  and categoryImg != ''"> and category_img = #{categoryImg}</if>
+            <if test="categoryLevel != null "> and category_level = #{categoryLevel}</if>
+            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+            <if test="visibleFlag != null "> and visible_flag = #{visibleFlag}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            and del_flag = 0
+        </where>
+    </select>
+    
+    <select id="selectCategoryById" parameterType="String" resultMap="CategoryResult">
+        <include refid="selectCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCategory" parameterType="Category">
+        insert into category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="categoryName != null">category_name,</if>
+            <if test="categoryImg != null">category_img,</if>
+            <if test="categoryLevel != null">category_level,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="visibleFlag != null">visible_flag,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="categoryImg != null">#{categoryImg},</if>
+            <if test="categoryLevel != null">#{categoryLevel},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="visibleFlag != null">#{visibleFlag},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCategory" parameterType="Category">
+        update category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="categoryImg != null">category_img = #{categoryImg},</if>
+            <if test="categoryLevel != null">category_level = #{categoryLevel},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="visibleFlag != null">visible_flag = #{visibleFlag},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="categoryNameLang.zh != null and categoryName == null">category_name = #{categoryNameLang.zh},</if>
+            <if test="categoryNameLang.en != null">category_name_en = #{categoryNameLang.en},</if>
+            <if test="categoryNameLang.tc != null">category_name_tc = #{categoryNameLang.tc},</if>
+            <if test="categoryNameLang.de != null">category_name_de = #{categoryNameLang.de},</if>
+            <if test="categoryNameLang.es != null">category_name_es = #{categoryNameLang.es},</if>
+            <if test="categoryNameLang.fr != null">category_name_fr = #{categoryNameLang.fr},</if>
+            <if test="categoryNameLang.idn != null">category_name_idn = #{categoryNameLang.idn},</if>
+            <if test="categoryNameLang.jp != null">category_name_jp = #{categoryNameLang.jp},</if>
+            <if test="categoryNameLang.ko != null">category_name_ko = #{categoryNameLang.ko},</if>
+            <if test="categoryNameLang.my != null">category_name_my = #{categoryNameLang.my},</if>
+            <if test="categoryNameLang.th != null">category_name_th = #{categoryNameLang.th},</if>
+            <if test="categoryNameLang.vi != null">category_name_vi = #{categoryNameLang.vi},</if>
+            <if test="categoryNameLang.pt != null">category_name_pt = #{categoryNameLang.pt},</if>
+            <if test="categoryNameLang.rus != null">category_name_rus = #{categoryNameLang.rus},</if>
+            <if test="categoryNameLang.blr != null">category_name_blr = #{categoryNameLang.blr},</if>
+            <if test="categoryNameLang.ida != null">category_name_ida = #{categoryNameLang.ida},</if>
+            <if test="categoryNameLang.sa != null">category_name_sa = #{categoryNameLang.sa},</if>
+            <if test="categoryNameLang.ar != null">category_name_ar = #{categoryNameLang.ar},</if>
+            <if test="categoryNameLang.it != null">category_name_it = #{categoryNameLang.it},</if>
+            <if test="categoryNameLang.tr != null">category_name_tr = #{categoryNameLang.tr},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCategoryById" parameterType="String">
+        update category set del_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteCategoryByIds" parameterType="String">
+        update category set del_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

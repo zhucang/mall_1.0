@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.UserShoppingCartMapper">
+    
+    <resultMap type="UserShoppingCart" id="UserShoppingCartResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="sellingGoodsInfoId"    column="selling_goods_info_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="skuId"    column="sku_id"    />
+        <result property="skuImgs"    column="sku_imgs"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsDesc"    column="goods_desc"    />
+        <result property="sellingPrice"    column="selling_price"    />
+        <result property="shopInfoId"    column="shop_info_id"    />
+        <result property="shopName"    column="shop_name"    />
+        <association property="goodsNameLang" javaType="langMgr">
+            <result property="zh"    column="goods_name"    />
+            <result property="en"    column="goods_name_en"    />
+            <result property="tc"    column="goods_name_tc"    />
+            <result property="de"    column="goods_name_de"    />
+            <result property="es"    column="goods_name_es"    />
+            <result property="fr"    column="goods_name_fr"    />
+            <result property="idn"    column="goods_name_idn"    />
+            <result property="jp"    column="goods_name_jp"    />
+            <result property="ko"    column="goods_name_ko"    />
+            <result property="my"    column="goods_name_my"    />
+            <result property="th"    column="goods_name_th"    />
+            <result property="vi"    column="goods_name_vi"    />
+            <result property="pt"    column="goods_name_pt"    />
+            <result property="rus"    column="goods_name_rus"    />
+            <result property="blr"    column="goods_name_blr"    />
+            <result property="ida"    column="goods_name_ida"    />
+            <result property="sa"    column="goods_name_sa"    />
+            <result property="ar"    column="goods_name_ar"    />
+            <result property="it"    column="goods_name_it"    />
+            <result property="tr"    column="goods_name_tr"    />
+        </association>
+        <association property="goodsDescLang" javaType="langMgr">
+            <result property="zh"    column="goods_desc"    />
+            <result property="en"    column="goods_desc_en"    />
+            <result property="tc"    column="goods_desc_tc"    />
+            <result property="de"    column="goods_desc_de"    />
+            <result property="es"    column="goods_desc_es"    />
+            <result property="fr"    column="goods_desc_fr"    />
+            <result property="idn"    column="goods_desc_idn"    />
+            <result property="jp"    column="goods_desc_jp"    />
+            <result property="ko"    column="goods_desc_ko"    />
+            <result property="my"    column="goods_desc_my"    />
+            <result property="th"    column="goods_desc_th"    />
+            <result property="vi"    column="goods_desc_vi"    />
+            <result property="pt"    column="goods_desc_pt"    />
+            <result property="rus"    column="goods_desc_rus"    />
+            <result property="blr"    column="goods_desc_blr"    />
+            <result property="ida"    column="goods_desc_ida"    />
+            <result property="sa"    column="goods_desc_sa"    />
+            <result property="ar"    column="goods_desc_ar"    />
+            <result property="it"    column="goods_desc_it"    />
+            <result property="tr"    column="goods_desc_tr"    />
+        </association>
+        <collection property="skuAttrValues" ofType="SkuAttrValue" column="{skuId=sku_id}" select="com.ruoyi.system.mapper.SkuAttrValueMapper.selectSkuAttrValueList"/>
+    </resultMap>
+
+    <sql id="selectUserShoppingCartVo">
+        select id, b.user_id, selling_goods_info_id, goods_name, goods_img, goods_desc,IFNULL(goods_price,selling_price) selling_price, quantity, sku_id, sku_imgs, create_by, create_time, update_by, update_time, remark, goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr, b.shop_info_id, shop_name
+        from
+            (
+                select user_id,shop_info_id
+                from user_shopping_cart a
+                         left join selling_goods_info b
+                                   on a.selling_goods_info_id = b.id
+                group by user_id, shop_info_id
+                order by max(a.id) desc
+            ) as a
+                left join
+            (
+                select a.id, user_id, selling_goods_info_id, goods_name, goods_img, goods_desc, selling_price, quantity, sku_id, sku_imgs, goods_price, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr, b.shop_info_id, shop_name
+                from user_shopping_cart a
+                         left join selling_goods_info b
+                                   on a.selling_goods_info_id = b.id
+                         left join system_goods_info c
+                                   on b.system_goods_info_id = c.id
+                         left join shop_info d
+                                   on b.shop_info_id = d.id
+                         left join sku e
+                                   on sku_id = e.id
+            ) as b
+            on a.shop_info_id = b.shop_info_id and a.user_id = b.user_id
+    </sql>
+
+    <select id="selectUserShoppingCartList" parameterType="UserShoppingCart" resultMap="UserShoppingCartResult">
+        <include refid="selectUserShoppingCartVo"/>
+        <where>  
+            <if test="userId != null "> and a.user_id = #{userId}</if>
+            <if test="sellingGoodsInfoId != null "> and selling_goods_info_id = #{sellingGoodsInfoId}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="skuId != null "> and sku_id = #{skuId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserShoppingCartById" parameterType="Long" resultMap="UserShoppingCartResult">
+        <include refid="selectUserShoppingCartVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserShoppingCart" parameterType="UserShoppingCart" useGeneratedKeys="true" keyProperty="id">
+        insert into user_shopping_cart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="sellingGoodsInfoId != null">selling_goods_info_id,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="skuId != null">sku_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="sellingGoodsInfoId != null">#{sellingGoodsInfoId},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="skuId != null">#{skuId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserShoppingCart" parameterType="UserShoppingCart">
+        update user_shopping_cart
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="sellingGoodsInfoId != null">selling_goods_info_id = #{sellingGoodsInfoId},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="skuId != null">sku_id = #{skuId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserShoppingCartById" parameterType="Long">
+        delete from user_shopping_cart where id = #{id}
+    </delete>
+
+    <delete id="deleteUserShoppingCartByIds" parameterType="String">
+        delete from user_shopping_cart where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

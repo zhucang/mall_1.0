@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SellingGoodsInfoMapper">
+
+    <resultMap type="SellingGoodsInfo" id="SellingGoodsInfoResult">
+        <result property="id"    column="id"    />
+        <result property="systemGoodsInfoId"    column="system_goods_info_id"    />
+        <result property="sellingPrice"    column="selling_price"    />
+        <result property="soldNum"    column="sold_num"    />
+        <result property="sort"    column="sort"    />
+        <result property="shopInfoId"    column="shop_info_id"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsDesc"    column="goods_desc"    />
+        <result property="systemPrice"    column="system_price"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="freightAmount"    column="freight_amount"    />
+        <association property="goodsNameLang" javaType="langMgr">
+            <result property="zh"    column="goods_name"    />
+            <result property="en"    column="goods_name_en"    />
+            <result property="tc"    column="goods_name_tc"    />
+            <result property="de"    column="goods_name_de"    />
+            <result property="es"    column="goods_name_es"    />
+            <result property="fr"    column="goods_name_fr"    />
+            <result property="idn"    column="goods_name_idn"    />
+            <result property="jp"    column="goods_name_jp"    />
+            <result property="ko"    column="goods_name_ko"    />
+            <result property="my"    column="goods_name_my"    />
+            <result property="th"    column="goods_name_th"    />
+            <result property="vi"    column="goods_name_vi"    />
+            <result property="pt"    column="goods_name_pt"    />
+            <result property="rus"    column="goods_name_rus"    />
+            <result property="blr"    column="goods_name_blr"    />
+            <result property="ida"    column="goods_name_ida"    />
+            <result property="sa"    column="goods_name_sa"    />
+            <result property="ar"    column="goods_name_ar"    />
+            <result property="it"    column="goods_name_it"    />
+            <result property="tr"    column="goods_name_tr"    />
+        </association>
+        <association property="goodsDescLang" javaType="langMgr">
+            <result property="zh"    column="goods_desc"    />
+            <result property="en"    column="goods_desc_en"    />
+            <result property="tc"    column="goods_desc_tc"    />
+            <result property="de"    column="goods_desc_de"    />
+            <result property="es"    column="goods_desc_es"    />
+            <result property="fr"    column="goods_desc_fr"    />
+            <result property="idn"    column="goods_desc_idn"    />
+            <result property="jp"    column="goods_desc_jp"    />
+            <result property="ko"    column="goods_desc_ko"    />
+            <result property="my"    column="goods_desc_my"    />
+            <result property="th"    column="goods_desc_th"    />
+            <result property="vi"    column="goods_desc_vi"    />
+            <result property="pt"    column="goods_desc_pt"    />
+            <result property="rus"    column="goods_desc_rus"    />
+            <result property="blr"    column="goods_desc_blr"    />
+            <result property="ida"    column="goods_desc_ida"    />
+            <result property="sa"    column="goods_desc_sa"    />
+            <result property="ar"    column="goods_desc_ar"    />
+            <result property="it"    column="goods_desc_it"    />
+            <result property="tr"    column="goods_desc_tr"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectSellingGoodsInfoVo">
+        select a.id, system_goods_info_id, selling_price, a.sold_num, a.sort, shop_info_id, shop_name, a.seller_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag, goods_code, goods_name, goods_img, goods_desc, system_price, category_id, freight_amount, goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr
+        from selling_goods_info a
+                 inner join shop_info c
+                            on a.shop_info_id = c.id
+                 inner join system_goods_info b
+                            on a.system_goods_info_id = b.id
+    </sql>
+
+    <select id="selectSellingGoodsInfoList" parameterType="SellingGoodsInfo" resultMap="SellingGoodsInfoResult">
+        <include refid="selectSellingGoodsInfoVo"/>
+        <if test="params.orderBy != null and params.orderBy != ''">
+            where a.id in
+            (
+            select id from
+            (
+            select a.id
+            from selling_goods_info a
+            inner join shop_info c
+            on a.shop_info_id = c.id
+            inner join system_goods_info b
+            on a.system_goods_info_id = b.id
+        </if>
+        <where>
+            <if test="systemGoodsInfoId != null "> and system_goods_info_id = #{systemGoodsInfoId}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat(#{goodsName},'%')</if>
+            <if test="sellingPrice != null "> and selling_price = #{sellingPrice}</if>
+            <if test="shopInfoId != null "> and shop_info_id = #{shopInfoId}</if>
+            <if test="sellerId != null  and sellerId != ''"> and a.seller_id = #{sellerId}</if>
+            <if test="categoryId != null "> and category_id in (select id from category where parent_id = #{categoryId} or id = #{categoryId})</if>
+            <if test="recommendedFlag != null"> and a.id in (select id from (select id from selling_goods_info where recommended_flag = #{recommendedFlag} order by RAND() limit #{params.randNum}) as a)</if>
+            <if test="params.hotGoodsNum != null"> and a.id in (select id from (select id from selling_goods_info where sold_num > 0 order by RAND() limit #{params.hotGoodsNum}) as a)</if>
+            <if test="params.maybeLike != null"> and a.id in (select id from (select id from selling_goods_info where sold_num > 0 order by RAND() limit #{params.maybeLike}) as a)</if>
+            <if test="params.ids != null and params.ids.size > 0">
+                and a.id in
+                <foreach collection="params.ids" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.ids != null and params.ids.size == 0">
+                and a.id = 0
+            </if>
+            and a.del_flag = 0 and b.del_flag = 0 and c.del_flag = 0
+        </where>
+        <if test="params.orderBy != null and params.orderBy != ''">
+            order by ${params.orderBy} limit #{params.startRow},#{params.endRow}
+            ) as temp
+            )
+        </if>
+    </select>
+
+    <select id="selectSellingGoodsInfoList_COUNT" resultType="Long">
+        select count(0)
+        from selling_goods_info a
+        inner join system_goods_info b
+        on a.system_goods_info_id = b.id
+        inner join shop_info c
+        on a.shop_info_id = c.id
+        <where>
+            <if test="systemGoodsInfoId != null "> and system_goods_info_id = #{systemGoodsInfoId}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat(#{goodsName},'%')</if>
+            <if test="sellingPrice != null "> and selling_price = #{sellingPrice}</if>
+            <if test="shopInfoId != null "> and shop_info_id = #{shopInfoId}</if>
+            <if test="sellerId != null  and sellerId != ''"> and a.seller_id = #{sellerId}</if>
+            <if test="categoryId != null "> and category_id in (select id from category where parent_id = #{categoryId} or id = #{categoryId})</if>
+            <if test="recommendedFlag != null"> and a.id in (select id from (select id from selling_goods_info where recommended_flag = #{recommendedFlag} order by RAND() limit #{params.randNum}) as a)</if>
+            <if test="params.hotGoodsNum != null"> and a.id in (select id from (select id from selling_goods_info where sold_num > 0 order by RAND() limit #{params.hotGoodsNum}) as a)</if>
+            <if test="params.maybeLike != null"> and a.id in (select id from (select id from selling_goods_info where sold_num > 0 order by RAND() limit #{params.maybeLike}) as a)</if>
+            <if test="params.ids != null and params.ids.size > 0">
+                and a.id in
+                <foreach collection="params.ids" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.ids != null and params.ids.size == 0">
+                and a.id = 0
+            </if>
+            and a.del_flag = 0 and b.del_flag = 0 and c.del_flag = 0
+        </where>
+    </select>
+
+    <select id="selectSellingGoodsInfoById" parameterType="Long" resultMap="SellingGoodsInfoResult">
+        <include refid="selectSellingGoodsInfoVo"/>
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertSellingGoodsInfo" parameterType="SellingGoodsInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into selling_goods_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="systemGoodsInfoId != null">system_goods_info_id,</if>
+            <if test="sellingPrice != null">selling_price,</if>
+            <if test="soldNum != null">sold_num,</if>
+            <if test="sort != null">sort,</if>
+            <if test="shopInfoId != null">shop_info_id,</if>
+            <if test="sellerId != null and sellerId != ''">seller_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="systemGoodsInfoId != null">#{systemGoodsInfoId},</if>
+            <if test="sellingPrice != null">#{sellingPrice},</if>
+            <if test="soldNum != null">#{soldNum},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="shopInfoId != null">#{shopInfoId},</if>
+            <if test="sellerId != null and sellerId != ''">#{sellerId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertSellingGoodsInfos">
+        insert into selling_goods_info(system_goods_info_id, selling_price, sold_num, shop_info_id, seller_id, create_time)
+        <foreach collection="list" index="index" open="values(" separator="),(" close=")" item="item">
+            #{item.systemGoodsInfoId}, #{item.sellingPrice}, #{item.soldNum}, #{item.shopInfoId}, #{item.sellerId}, #{item.createTime}
+        </foreach>
+    </insert>
+
+    <update id="updateSellingGoodsInfo" parameterType="SellingGoodsInfo">
+        update selling_goods_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="systemGoodsInfoId != null">system_goods_info_id = #{systemGoodsInfoId},</if>
+            <if test="sellingPrice != null">selling_price = #{sellingPrice},</if>
+            <if test="soldNum != null">sold_num = #{soldNum},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="shopInfoId != null">shop_info_id = #{shopInfoId},</if>
+            <if test="sellerId != null and sellerId != ''">seller_id = #{sellerId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSellingGoodsInfoById" parameterType="Long">
+        update selling_goods_info set del_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteSellingGoodsInfoByIds" parameterType="String">
+        update selling_goods_info set del_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

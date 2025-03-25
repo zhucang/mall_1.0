@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SellerAccountApplyRecordMapper">
+    
+    <resultMap type="SellerAccountApplyRecord" id="SellerAccountApplyRecordResult">
+        <result property="id"    column="id"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="userPwd"    column="user_pwd"    />
+        <result property="realName"    column="real_name"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="img1Key"    column="img1_key"    />
+        <result property="img2Key"    column="img2_key"    />
+        <result property="img3Key"    column="img3_key"    />
+        <result property="countryName"    column="country_name"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="shopImg"    column="shop_img"    />
+        <result property="applyIp"    column="apply_ip"    />
+        <result property="applyAddress"    column="apply_address"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSellerAccountApplyRecordVo">
+        select id, phone, email, user_pwd, real_name, id_card, img1_key, img2_key, img3_key, country_name, shop_name, shop_img, apply_ip, apply_address, status, create_by, create_time, update_by, update_time, remark from seller_account_apply_record
+    </sql>
+
+    <select id="selectSellerAccountApplyRecordList" parameterType="SellerAccountApplyRecord" resultMap="SellerAccountApplyRecordResult">
+        <include refid="selectSellerAccountApplyRecordVo"/>
+        <where>  
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="email != null  and email != ''"> and email like concat('%', #{email}, '%')</if>
+            <if test="userPwd != null  and userPwd != ''"> and user_pwd = #{userPwd}</if>
+            <if test="realName != null  and realName != ''"> and real_name like concat('%', #{realName}, '%')</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="img1Key != null  and img1Key != ''"> and img1_key = #{img1Key}</if>
+            <if test="img2Key != null  and img2Key != ''"> and img2_key = #{img2Key}</if>
+            <if test="img3Key != null  and img3Key != ''"> and img3_key = #{img3Key}</if>
+            <if test="countryName != null  and countryName != ''"> and country_name like concat('%', #{countryName}, '%')</if>
+            <if test="shopName != null  and shopName != ''"> and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="shopImg != null  and shopImg != ''"> and shop_img = #{shopImg}</if>
+            <if test="applyIp != null  and applyIp != ''"> and apply_ip = #{applyIp}</if>
+            <if test="applyAddress != null  and applyAddress != ''"> and apply_address = #{applyAddress}</if>
+            <if test="status != null"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSellerAccountApplyRecordById" parameterType="Long" resultMap="SellerAccountApplyRecordResult">
+        <include refid="selectSellerAccountApplyRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSellerAccountApplyRecord" parameterType="SellerAccountApplyRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into seller_account_apply_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phone != null">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="userPwd != null and userPwd != ''">user_pwd,</if>
+            <if test="realName != null">real_name,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="img1Key != null">img1_key,</if>
+            <if test="img2Key != null">img2_key,</if>
+            <if test="img3Key != null">img3_key,</if>
+            <if test="countryName != null">country_name,</if>
+            <if test="shopName != null and shopName != ''">shop_name,</if>
+            <if test="shopImg != null">shop_img,</if>
+            <if test="applyIp != null">apply_ip,</if>
+            <if test="applyAddress != null">apply_address,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="userPwd != null and userPwd != ''">#{userPwd},</if>
+            <if test="realName != null">#{realName},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="img1Key != null">#{img1Key},</if>
+            <if test="img2Key != null">#{img2Key},</if>
+            <if test="img3Key != null">#{img3Key},</if>
+            <if test="countryName != null">#{countryName},</if>
+            <if test="shopName != null and shopName != ''">#{shopName},</if>
+            <if test="shopImg != null">#{shopImg},</if>
+            <if test="applyIp != null">#{applyIp},</if>
+            <if test="applyAddress != null">#{applyAddress},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSellerAccountApplyRecord" parameterType="SellerAccountApplyRecord">
+        update seller_account_apply_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="userPwd != null and userPwd != ''">user_pwd = #{userPwd},</if>
+            <if test="realName != null">real_name = #{realName},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="img1Key != null">img1_key = #{img1Key},</if>
+            <if test="img2Key != null">img2_key = #{img2Key},</if>
+            <if test="img3Key != null">img3_key = #{img3Key},</if>
+            <if test="countryName != null">country_name = #{countryName},</if>
+            <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
+            <if test="shopImg != null">shop_img = #{shopImg},</if>
+            <if test="applyIp != null">apply_ip = #{applyIp},</if>
+            <if test="applyAddress != null">apply_address = #{applyAddress},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSellerAccountApplyRecordById" parameterType="Long">
+        delete from seller_account_apply_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSellerAccountApplyRecordByIds" parameterType="String">
+        delete from seller_account_apply_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

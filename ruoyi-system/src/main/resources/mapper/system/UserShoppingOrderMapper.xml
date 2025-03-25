@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.UserShoppingOrderMapper">
+
+    <resultMap type="UserShoppingOrder" id="UserShoppingOrderResult">
+        <result property="id"    column="id"    />
+        <result property="orderCode"    column="order_code"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userAccount"    column="user_account"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="accountType"    column="account_type"    />
+        <result property="sellerFlag"    column="seller_flag"    />
+        <result property="orderPrice"    column="order_price"    />
+        <result property="orderSystemPrice"    column="order_system_price"    />
+        <result property="freightAmount"    column="freight_amount"    />
+        <result property="trackingNumber"    column="tracking_number"    />
+        <result property="shippingAddress"    column="shipping_address"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="refundStatus"    column="refund_status"    />
+        <result property="submitPlatformFlag"    column="submit_platform_flag"    />
+        <result property="shopInfoId"    column="shop_info_id"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="shippingTime"    column="shipping_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <collection property="userShoppingOrderDetails" ofType="UserShoppingOrderDetail" column="{userShoppingOrderId=id}" select="com.ruoyi.system.mapper.UserShoppingOrderDetailMapper.selectUserShoppingOrderDetailList" />
+    </resultMap>
+
+    <sql id="selectUserShoppingOrderVo">
+        select a.id, order_code, user_id, user_account, nick_name, account_type, seller_flag, a.order_price, order_system_price, freight_amount, tracking_number, shipping_address, order_status, refund_status, submit_platform_flag, shop_info_id, seller_id, pay_time, shipping_time, finish_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+        from user_shopping_order  a
+                 left join user_info b
+                           on a.user_id = b.id
+    </sql>
+
+    <select id="selectUserShoppingOrderList" parameterType="UserShoppingOrder" resultMap="UserShoppingOrderResult">
+        <include refid="selectUserShoppingOrderVo"/>
+        <where>  
+            <if test="orderCode != null  and orderCode != ''"> and order_code like concat ('%',#{orderCode},'%')</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userAccount != null "> and user_account like concat('%',#{userAccount},'%') </if>
+            <if test="nickName != null "> and nick_name like concat('%',#{nickName},'%') </if>
+            <if test="accountType != null "> and account_type = #{accountType}</if>
+            <if test="sellerFlag != null "> and seller_flag = #{sellerFlag}</if>
+            <if test="agentId != null "> and agent_id = #{agentId}</if>
+            <if test="sellerId != null "> and seller_id = #{sellerId}</if>
+            <if test="orderStatus != null "> and order_status = #{orderStatus}</if>
+            <if test="refundStatus != null "> and refund_status = #{refundStatus}</if>
+            <if test="payTime != null "> and pay_time = #{payTime}</if>
+            <if test="shippingTime != null ">
+                <![CDATA[ and shipping_time <=  #{shippingTime} ]]></if>
+            <if test="finishTime != null "> and finish_time = #{finishTime}</if>
+            <if test="submitPlatformFlag != null "> and submit_platform_flag = #{submitPlatformFlag}</if>
+            <if test="params.ids != null and params.ids.size > 0">
+                and a.id in
+                <foreach collection="params.ids" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.ids != null and params.ids.size == 0">
+                and a.id = 0
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectUserShoppingOrderById" parameterType="Long" resultMap="UserShoppingOrderResult">
+        <include refid="selectUserShoppingOrderVo"/>
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertUserShoppingOrder" parameterType="UserShoppingOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into user_shopping_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderCode != null and orderCode != ''">order_code,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="orderPrice != null">order_price,</if>
+            <if test="orderSystemPrice != null">order_system_price,</if>
+            <if test="freightAmount != null">freight_amount,</if>
+            <if test="trackingNumber != null">tracking_number,</if>
+            <if test="shippingAddress != null and shippingAddress != ''">shipping_address,</if>
+            <if test="orderStatus != null">order_status,</if>
+            <if test="refundStatus != null">refund_status,</if>
+            <if test="shopInfoId != null">shop_info_id,</if>
+            <if test="sellerId != null">seller_id,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="shippingTime != null">shipping_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderCode != null and orderCode != ''">#{orderCode},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="orderPrice != null">#{orderPrice},</if>
+            <if test="orderSystemPrice != null">#{orderSystemPrice},</if>
+            <if test="freightAmount != null">#{freightAmount},</if>
+            <if test="trackingNumber != null">#{trackingNumber},</if>
+            <if test="shippingAddress != null and shippingAddress != ''">#{shippingAddress},</if>
+            <if test="orderStatus != null">#{orderStatus},</if>
+            <if test="refundStatus != null">#{refundStatus},</if>
+            <if test="shopInfoId != null">#{shopInfoId},</if>
+            <if test="sellerId != null">#{sellerId},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="shippingTime != null">#{shippingTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertUserShoppingOrders" useGeneratedKeys="true" keyProperty="id">
+        insert into user_shopping_order
+        (order_code, user_id, order_price, order_system_price, freight_amount, shipping_address, order_status, shop_info_id, seller_id, pay_time, shipping_time, finish_time, create_by, create_time, update_by, update_time, remark)
+        <foreach collection="list" item="item" index="index" open="values(" separator="),(" close=")" nullable="true">
+            #{item.orderCode}, #{item.userId}, #{item.orderPrice}, #{item.orderSystemPrice}, #{item.freightAmount}, #{item.shippingAddress}, #{item.orderStatus}, #{item.shopInfoId}, #{item.sellerId}, #{item.payTime},#{item.shippingTime},  #{item.finishTime}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime},#{item.remark}
+        </foreach>
+    </insert>
+
+    <update id="updateUserShoppingOrder" parameterType="UserShoppingOrder">
+        update user_shopping_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderCode != null and orderCode != ''">order_code = #{orderCode},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="orderPrice != null">order_price = #{orderPrice},</if>
+            <if test="freightAmount != null">freight_amount = #{freightAmount},</if>
+            <if test="trackingNumber != null">tracking_number = #{trackingNumber},</if>
+            <if test="shippingAddress != null and shippingAddress != ''">shipping_address = #{shippingAddress},</if>
+            <if test="orderStatus != null">order_status = #{orderStatus},</if>
+            <if test="refundStatus != null">refund_status = #{refundStatus},</if>
+            <if test="submitPlatformFlag != null">submit_platform_flag = #{submitPlatformFlag},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="shippingTime != null">shipping_time = #{shippingTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserShoppingOrderById" parameterType="Long">
+        delete from user_shopping_order where id = #{id}
+    </delete>
+
+    <delete id="deleteUserShoppingOrderByIds" parameterType="String">
+        delete from user_shopping_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
