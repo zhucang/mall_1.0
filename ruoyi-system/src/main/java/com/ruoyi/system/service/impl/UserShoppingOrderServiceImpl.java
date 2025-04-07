@@ -70,6 +70,9 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
     @Autowired
     private IShopInfoService shopInfoService;
 
+    @Autowired
+    private IUserHoldCouponService userHoldCouponService;
+
     /**
      * 查询用户购物订单
      * 
@@ -159,7 +162,7 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int shipUserShoppingOrder(UserShoppingOrder userShoppingOrder){
         //用户购物订单ID
         Long id = userShoppingOrder.getId();
@@ -183,6 +186,22 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
         int updateUserShoppingOrder = userShoppingOrderMapper.updateUserShoppingOrder(userShoppingOrder);
         if (updateUserShoppingOrder == 0){
             throw new ServiceException("更新订单信息异常");
+        }
+        //更新明细订单状态
+        //获取所有购物订单明细
+        UserShoppingOrderDetail userShoppingOrderDetailSearch = new UserShoppingOrderDetail();
+        userShoppingOrderDetailSearch.setUserShoppingOrderId(id);
+        List<UserShoppingOrderDetail> userShoppingOrderDetails = userShoppingOrderDetailService.selectUserShoppingOrderDetailList(userShoppingOrderDetailSearch);
+        //更新所有明细订单信息
+        for (int j = 0; j < userShoppingOrderDetails.size(); j++) {
+            UserShoppingOrderDetail userShoppingOrderDetail = userShoppingOrderDetails.get(j);
+            if (userShoppingOrderDetail.getOrderStatus().equals(1)){
+                userShoppingOrderDetail.setOrderStatus(2);
+                int updateUserShoppingOrderDetail = userShoppingOrderDetailService.updateUserShoppingOrderDetail(userShoppingOrderDetail);
+                if (updateUserShoppingOrderDetail <= 0){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单明细状态异常");
+                }
+            }
         }
         return 1;
     }
@@ -323,6 +342,13 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
         //商品sku对应属性分组的map
         Map<Long, List<SkuAttrValue>> skuAttrValuesMap = skuAttrValues.stream().collect(Collectors.groupingBy(a -> a.getSkuId()));
 
+        //获取使用的优惠券信息
+        UserHoldCoupon userHoldCouponSearch = new UserHoldCoupon();
+        userHoldCouponSearch.getParams().put("userHoldCouponIds",userShoppingOrders.stream().filter(a->a.getUsedCouponId() != null).map(a->a.getUsedCouponId()).collect(Collectors.toList()));
+        List<UserHoldCoupon> userHoldCoupons = userHoldCouponService.selectUserHoldCouponList(userHoldCouponSearch);
+        //优惠券信息map
+        Map<Long, UserHoldCoupon> userHoldCouponMap = userHoldCoupons.stream().collect(Collectors.toMap(a -> a.getUserHoldCouponId(), a -> a));
+
         //当前时间
         Date nowDateTime = new Date();
         //商品sku map
@@ -331,6 +357,23 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
         for (int i = 0; i < userShoppingOrders.size(); i++) {
             //用户购物订单信息
             UserShoppingOrder userShoppingOrder = userShoppingOrders.get(i);
+            //优惠券ID
+            Long usedCouponId = userShoppingOrder.getUsedCouponId();
+            //优惠券信息
+            UserHoldCoupon userHoldCoupon = null;
+            //使用了优惠券
+            if (usedCouponId != null){
+                userHoldCoupon = userHoldCouponMap.get(usedCouponId);
+                if (userHoldCoupon != null){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"获取优惠券信息异常");
+                }
+                if (!userHoldCoupon.getUserId().equals(userId)){
+                    throw new ServiceException("校验用户信息异常", HttpStatus.UNAUTHORIZED);
+                }
+                if (!userHoldCoupon.getCouponStatus().equals(0)){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"无效的优惠券");
+                }
+            }
             //用户购物订单信息明细信息
             List<UserShoppingOrderDetail> userShoppingOrderDetails = userShoppingOrder.getUserShoppingOrderDetails();
             //订单号
@@ -382,6 +425,23 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
             }
             //订单总金额
             BigDecimal orderPriceTotal = userShoppingOrderDetails.stream().map(a -> a.getOrderPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+            //优惠券金额
+            BigDecimal couponAmount = BigDecimal.ZERO;
+            //如果使用了优惠券
+            if (userHoldCoupon != null){
+                //优惠券门槛金额
+                BigDecimal requireAmount = userHoldCoupon.getRequireAmount();
+                if (orderPriceTotal.compareTo(requireAmount) < 0){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"订单金额未达到使用此优惠券的门槛");
+                }
+                couponAmount = userHoldCoupon.getCouponAmount();
+                //更新优惠券状态为已使用
+                userHoldCoupon.setUseStatus(1);
+                int updateUserHoldCoupon = userHoldCouponService.updateUserHoldCoupon(userHoldCoupon);
+                if (updateUserHoldCoupon == 0){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"更新优惠券状态异常");
+                }
+            }
             //订单系统总金额
             BigDecimal orderSystemPriceTotal = userShoppingOrderDetails.stream().map(a -> a.getOrderSystemPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
             //运费金额（每一种商品只收一份运费金额）
@@ -390,7 +450,8 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
             orderPriceTotal = orderPriceTotal.add(freightAmount);
             userShoppingOrder.setOrderCode(orderCode);
             userShoppingOrder.setUserId(userId);
-            userShoppingOrder.setOrderPrice(orderPriceTotal);
+            userShoppingOrder.setOrderPriceBeforeDiscount(orderPriceTotal);
+            userShoppingOrder.setOrderPrice(orderPriceTotal.subtract(couponAmount));
             userShoppingOrder.setOrderSystemPrice(orderSystemPriceTotal);
             userShoppingOrder.setFreightAmount(freightAmount);
             userShoppingOrder.setShippingAddress(JSONObject.toJSONString(userReceiveAddressmap.get(userShoppingOrder.getShippingAddress())));
@@ -437,18 +498,79 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
     public int userPayShoppingOrders(List<UserShoppingOrder> userShoppingOrders){
         //用户ID
         Long userId = SecurityUtils.getUserId();
-        //订单IDS
-        List<Long> userShoppingOrderIds = userShoppingOrders.stream().map(a -> a.getId()).distinct().collect(Collectors.toList());
+        //本次订单使用的优惠券
+        List<Long> usedCouponIds = userShoppingOrders.stream().filter(a -> a.getUsedCouponId() != null).map(a -> a.getUsedCouponId()).distinct().collect(Collectors.toList());
+        //获取使用的优惠券信息
+        UserHoldCoupon userHoldCouponSearch = new UserHoldCoupon();
+        userHoldCouponSearch.getParams().put("userHoldCouponIds",usedCouponIds);
+        userHoldCouponSearch.setUseStatus(0);
+        userHoldCouponSearch.setCouponStatus(0);
+        List<UserHoldCoupon> userHoldCoupons = userHoldCouponService.selectUserHoldCouponList(userHoldCouponSearch);
+        //验证是否有失效的优惠券
+        if (userHoldCoupons.size() != usedCouponIds.size()){
+            throw new LangException(HintConstants.SYSTEM_BUSY,"优惠券已失效");
+        }
+        //优惠券信息map
+        Map<Long, UserHoldCoupon> userHoldCouponMap = userHoldCoupons.stream().collect(Collectors.toMap(a -> a.getUserHoldCouponId(), a -> a));
 
+        //用户购物订单订单IDS
+        List<Long> userShoppingOrderIds = userShoppingOrders.stream().map(a -> a.getId()).distinct().collect(Collectors.toList());
         //获取订单信息
         UserShoppingOrder userShoppingOrderSearch = new UserShoppingOrder();
         userShoppingOrderSearch.getParams().put("ids",userShoppingOrderIds);
-        userShoppingOrders = userShoppingOrderMapper.selectUserShoppingOrderList(userShoppingOrderSearch);
-        if (userShoppingOrders.size() != userShoppingOrderIds.size()){
+        List<UserShoppingOrder> userShoppingOrdersVo = userShoppingOrderMapper.selectUserShoppingOrderList(userShoppingOrderSearch);
+        if (userShoppingOrders.size() != userShoppingOrdersVo.size()){
             throw new LangException(HintConstants.SYSTEM_BUSY,"获取订单信息异常");
         }
+        //遍历
+        for (int i = 0; i < userShoppingOrders.size(); i++) {
+            //订单信息
+            UserShoppingOrder userShoppingOrder = userShoppingOrdersVo.get(i);
+            if (!userShoppingOrder.getOrderStatus().equals(0)){
+                throw new LangException(HintConstants.SYSTEM_BUSY,"订单状态非待付款");
+            }
+            //该订单使用的优惠券ID
+            Long usedCouponId = userShoppingOrders.get(i).getUsedCouponId();
+            //创建订单时未使用优惠券，支付时使用了优惠券
+            if (userShoppingOrder.getUsedCouponId() == null && usedCouponId != null){
+                //优惠券信息
+                UserHoldCoupon userHoldCoupon = userHoldCouponMap.get(usedCouponId);
+                if (userHoldCoupon == null){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"获取优惠券信息异常");
+                }
+                if (!userShoppingOrder.getSellerId().equals(userHoldCoupon.getSellerId())){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"优惠券使用异常");
+                }
+                if (!userShoppingOrder.getUserId().equals(userId)){
+                    throw new ServiceException("校验用户信息异常", HttpStatus.UNAUTHORIZED);
+                }
+                if (!userHoldCoupon.getUserId().equals(userId)){
+                    throw new ServiceException("校验用户信息异常", HttpStatus.UNAUTHORIZED);
+                }
+                //优惠券门槛金额
+                BigDecimal requireAmount = userHoldCoupon.getRequireAmount();
+                //订单总金额
+                BigDecimal orderPrice = userShoppingOrder.getOrderPrice();
+                if (orderPrice.compareTo(requireAmount) < 0){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"订单金额未达到使用此优惠券的门槛");
+                }
+                //优惠券金额
+                BigDecimal couponAmount = userHoldCoupon.getCouponAmount();
+                //更新优惠券状态为已使用
+                userHoldCoupon.setUseStatus(1);
+                int updateUserHoldCoupon = userHoldCouponService.updateUserHoldCoupon(userHoldCoupon);
+                if (updateUserHoldCoupon == 0){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"更新优惠券状态异常");
+                }
+                userShoppingOrder.setCouponAmount(couponAmount);
+                userShoppingOrder.setOrderPriceBeforeDiscount(orderPrice);
+                userShoppingOrder.setOrderPrice(orderPrice.subtract(couponAmount));
+            }
+        }
+
+
         //共需支付
-        BigDecimal payAmount = userShoppingOrders.stream().map(a -> a.getOrderPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal payAmount = userShoppingOrdersVo.stream().map(a -> a.getOrderPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
         //判断余额是否足够
         UserAmount userAmount = userAmountService.getUserAmount(userId, 3L);
         //用户余额变更前
@@ -482,14 +604,28 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
             throw new LangException(HintConstants.SYSTEM_BUSY,"插入明细异常");
         }
         //更新订单状态
-        for (int i = 0; i < userShoppingOrders.size(); i++) {
+        for (int i = 0; i < userShoppingOrdersVo.size(); i++) {
             //订单信息
-            UserShoppingOrder userShoppingOrder = userShoppingOrders.get(i);
+            UserShoppingOrder userShoppingOrder = userShoppingOrdersVo.get(i);
             userShoppingOrder.setOrderStatus(1);
             userShoppingOrder.setPayTime(new Date());
             int updateUserShoppingOrder = userShoppingOrderMapper.updateUserShoppingOrder(userShoppingOrder);
             if (updateUserShoppingOrder <= 0){
                 throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单状态异常");
+            }
+            //更新明细订单状态
+            //获取所有购物订单明细
+            UserShoppingOrderDetail userShoppingOrderDetailSearch = new UserShoppingOrderDetail();
+            userShoppingOrderDetailSearch.setUserShoppingOrderId(userShoppingOrder.getId());
+            List<UserShoppingOrderDetail> userShoppingOrderDetails = userShoppingOrderDetailService.selectUserShoppingOrderDetailList(userShoppingOrderDetailSearch);
+            //更新所有明细订单信息
+            for (int j = 0; j < userShoppingOrderDetails.size(); j++) {
+                UserShoppingOrderDetail userShoppingOrderDetail = userShoppingOrderDetails.get(j);
+                userShoppingOrderDetail.setOrderStatus(1);
+                int updateUserShoppingOrderDetail = userShoppingOrderDetailService.updateUserShoppingOrderDetail(userShoppingOrderDetail);
+                if (updateUserShoppingOrderDetail <= 0){
+                    throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单明细状态异常");
+                }
             }
         }
         return 1;
@@ -518,6 +654,20 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
         }
         userShoppingOrder.setOrderStatus(3);
         userShoppingOrder.setFinishTime(new Date());
+        //更新明细订单状态
+        //获取所有购物订单明细
+        UserShoppingOrderDetail userShoppingOrderDetailSearch = new UserShoppingOrderDetail();
+        userShoppingOrderDetailSearch.setUserShoppingOrderId(id);
+        List<UserShoppingOrderDetail> userShoppingOrderDetails = userShoppingOrderDetailService.selectUserShoppingOrderDetailList(userShoppingOrderDetailSearch);
+        //更新所有明细订单信息
+        for (int j = 0; j < userShoppingOrderDetails.size(); j++) {
+            UserShoppingOrderDetail userShoppingOrderDetail = userShoppingOrderDetails.get(j);
+            userShoppingOrderDetail.setOrderStatus(3);
+            int updateUserShoppingOrderDetail = userShoppingOrderDetailService.updateUserShoppingOrderDetail(userShoppingOrderDetail);
+            if (updateUserShoppingOrderDetail <= 0){
+                throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单明细状态异常");
+            }
+        }
         return userShoppingOrderMapper.updateUserShoppingOrder(userShoppingOrder);
     }
 
@@ -610,6 +760,15 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
         }
         //更新商品销量
         List<UserShoppingOrderDetail> userShoppingOrderDetails = userShoppingOrder.getUserShoppingOrderDetails();
+        //更新所有明细订单信息
+        for (int j = 0; j < userShoppingOrderDetails.size(); j++) {
+            UserShoppingOrderDetail userShoppingOrderDetail = userShoppingOrderDetails.get(j);
+            userShoppingOrderDetail.setOrderStatus(5);
+            int updateUserShoppingOrderDetail = userShoppingOrderDetailService.updateUserShoppingOrderDetail(userShoppingOrderDetail);
+            if (updateUserShoppingOrderDetail <= 0){
+                throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单明细状态异常");
+            }
+        }
         SellingGoodsInfo sellingGoodsInfoSearch = new SellingGoodsInfo();
         sellingGoodsInfoSearch.getParams().put("ids",userShoppingOrderDetails.stream().map(a->a.getSellingGoodsInfoId()).collect(Collectors.toList()));
         //店铺商品信息
@@ -723,77 +882,6 @@ public class UserShoppingOrderServiceImpl implements IUserShoppingOrderService
             if (updateUserShoppingOrder == 0){
                 throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单信息异常");
             }
-        }
-        return 1;
-    }
-
-    /**
-     * 用户申请退款
-     * @param userShoppingOrder
-     * @return
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int userApplyRefund(UserShoppingOrder userShoppingOrder){
-        //订单信息ID
-        Long id = userShoppingOrder.getId();
-        //订单信息
-        userShoppingOrder = userShoppingOrderMapper.selectUserShoppingOrderById(id);
-        //订单状态
-        Integer orderStatus = userShoppingOrder.getOrderStatus();
-        //如果正在退款中
-        if (orderStatus.equals(4)){
-            if (!userShoppingOrder.getRefundStatus().equals(0)){
-                throw new LangException(HintConstants.SYSTEM_BUSY,"订单非可退款状态");
-            }
-        }else {
-            if (orderStatus.equals(0) || orderStatus.equals(3)){
-                throw new LangException(HintConstants.SYSTEM_BUSY,"订单非可退款状态");
-            }
-        }
-        //如果还未发货，直接退款成功
-        if (orderStatus.equals(1)){
-            userShoppingOrder.setRefundStatus(2);
-            //用户ID
-            Long userId = userShoppingOrder.getUserId();
-            //返还购物金额
-            BigDecimal orderPrice = userShoppingOrder.getOrderPrice();
-            //用户钱包信息
-            UserAmount userAmount = userAmountService.getUserAmount(userId, 3L);
-            //用户余额变更前
-            BigDecimal userAmountBefore = userAmount.getAmount();
-            //用户余额变更前
-            BigDecimal userAmountAfter = userAmountBefore.add(orderPrice);
-            //更新用户余额
-            userAmount.setAmount(userAmountAfter);
-            int updateUserAmount = userAmountService.updateUserAmount(userAmount);
-            if (updateUserAmount == 0){
-                throw new LangException(HintConstants.SYSTEM_BUSY,"更新用户余额异常");
-            }
-            //插入流水明细记录
-            UserBillDetail userBillDetail = new UserBillDetail();
-            userBillDetail.setUserId(userId);
-            userBillDetail.setDeType("用户购物订单退款");
-            userBillDetail.setDeSummary("用户购物订单退款");
-            userBillDetail.setOrderAmount(orderPrice);
-            userBillDetail.setOrderTime(new Date());
-            userBillDetail.setAmountBefore(userAmountBefore);
-            userBillDetail.setAmountAfter(userAmountAfter);
-            userBillDetail.setRelateOrderId(userShoppingOrder.getId());
-            userBillDetail.setOrderClass(78);
-            userBillDetail.setCurrencyId(userAmount.getCurrencyId());
-            int insertUserBillDetail = userBillDetailService.insertUserBillDetail(userBillDetail);
-            if (insertUserBillDetail <= 0) {
-                throw new LangException(HintConstants.SYSTEM_BUSY,"插入流水明细异常");
-            }
-        }else {
-            //如果已发货或者订单已经完成，则退款需要申请
-            userShoppingOrder.setRefundStatus(1);
-        }
-        userShoppingOrder.setOrderStatus(4);
-        int updateUserShoppingOrder = userShoppingOrderMapper.updateUserShoppingOrder(userShoppingOrder);
-        if (updateUserShoppingOrder == 0){
-            throw new LangException(HintConstants.SYSTEM_BUSY,"更新订单信息异常");
         }
         return 1;
     }

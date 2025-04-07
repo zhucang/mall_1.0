@@ -16,7 +16,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsSinglePrice"    column="goods_single_price"    />
         <result property="goodsSystemSinglePrice"    column="goods_system_single_price"    />
         <result property="orderPrice"    column="order_price"    />
+        <result property="orderSystemPrice"    column="order_system_price"    />
         <result property="freightAmount"    column="freight_amount"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="afterSaleStatus"    column="after_sale_status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -76,7 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectUserShoppingOrderDetailVo">
-        select a.id, user_shopping_order_id, selling_goods_info_id, goods_name, goods_img, goods_desc, sku_id, sku_imgs, buy_num, goods_single_price, order_price, a.freight_amount, a.create_by, a.create_time, a.update_by, a.update_time, a.remark ,goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr, a.shop_info_id, shop_name
+        select a.id, user_shopping_order_id, selling_goods_info_id, goods_name, goods_img, goods_desc, sku_id, sku_imgs, buy_num, goods_single_price, a.order_price, a.order_system_price, a.freight_amount, a.order_status, after_sale_status, a.create_by, a.create_time, a.update_by, a.update_time, a.remark ,goods_name_en, goods_name_tc, goods_name_de, goods_name_es, goods_name_fr, goods_name_idn, goods_name_jp, goods_name_ko, goods_name_my, goods_name_th, goods_name_vi, goods_name_pt, goods_name_rus, goods_name_blr, goods_name_ida, goods_name_sa, goods_name_ar, goods_name_it, goods_name_tr, goods_desc_en, goods_desc_tc, goods_desc_de, goods_desc_es, goods_desc_fr, goods_desc_idn, goods_desc_jp, goods_desc_ko, goods_desc_my, goods_desc_th, goods_desc_vi, goods_desc_pt, goods_desc_rus, goods_desc_blr, goods_desc_ida, goods_desc_sa, goods_desc_ar, goods_desc_it, goods_desc_tr, a.shop_info_id, shop_name, user_id
         from user_shopping_order_detail a
                  left join selling_goods_info b
                            on a.selling_goods_info_id = b.id
@@ -86,6 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                            on b.shop_info_id = d.id
                  left join sku e
                            on sku_id = e.id
+                 left join user_shopping_order f
+                           on user_shopping_order_id = f.id
     </sql>
 
     <select id="selectUserShoppingOrderDetailList" parameterType="UserShoppingOrderDetail" resultMap="UserShoppingOrderDetailResult">
@@ -97,6 +102,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="buyNum != null "> and buy_num = #{buyNum}</if>
             <if test="goodsSinglePrice != null "> and goods_single_price = #{goodsSinglePrice}</if>
             <if test="orderPrice != null "> and order_price = #{orderPrice}</if>
+            <if test="orderStatus != null "> and order_status = #{orderStatus}</if>
+            <if test="afterSaleStatus != null "> and after_sale_status = #{afterSaleStatus}</if>
             <if test="shopInfoId != null "> and a.shop_info_id = #{shopInfoId}</if>
             <if test="params.userShoppingOrderIds != null and params.userShoppingOrderIds.size > 0">
                 and user_shopping_order_id in
@@ -116,7 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="generateRobotOrder" resultMap="UserShoppingOrderDetailResult">
-        select selling_goods_info_id, shop_info_id, seller_id, b.id sku_id, 1 buy_num, IFNULL(goods_price,selling_price) goods_single_price, IFNULL(b.system_price,a.system_price) goods_system_single_price, freight_amount, user_id
+        select selling_goods_info_id, shop_info_id, seller_id, b.id sku_id, 1 buy_num, IFNULL(goods_price,selling_price) goods_single_price, IFNULL(b.system_price,a.system_price) goods_system_single_price, freight_amount, 1 as order_status, user_id
         from
             (select a.id selling_goods_info_id, shop_info_id, seller_id, selling_price, system_goods_info_id, system_price, freight_amount, (select id from user_info
                                                                                                                                              where is_del = 0 and account_type = 2 and id not in (select user_id
@@ -160,7 +167,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="buyNum != null">buy_num,</if>
             <if test="goodsSinglePrice != null">goods_single_price,</if>
             <if test="orderPrice != null">order_price,</if>
+            <if test="orderSystemPrice != null">order_system_price,</if>
             <if test="freightAmount != null">freight_amount,</if>
+            <if test="orderStatus != null">order_status,</if>
+            <if test="afterSaleStatus != null">after_sale_status,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -175,7 +185,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="buyNum != null">#{buyNum},</if>
             <if test="goodsSinglePrice != null">#{goodsSinglePrice},</if>
             <if test="orderPrice != null">#{orderPrice},</if>
+            <if test="orderSystemPrice != null">#{orderSystemPrice},</if>
             <if test="freightAmount != null">#{freightAmount},</if>
+            <if test="orderStatus != null">#{orderStatus},</if>
+            <if test="afterSaleStatus != null">#{afterSaleStatus},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -186,9 +199,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertUserShoppingOrderDetails">
         insert into user_shopping_order_detail
-            (user_shopping_order_id, selling_goods_info_id, shop_info_id, sku_id, buy_num, goods_single_price, order_price, goods_system_single_price, order_system_price, freight_amount, create_by, create_time, update_by, update_time, remark)
+            (user_shopping_order_id, selling_goods_info_id, shop_info_id, sku_id, buy_num, goods_single_price, order_price, goods_system_single_price, order_system_price, freight_amount, order_status, create_by, create_time, update_by, update_time, remark)
         <foreach collection="list" item="item" index="index" open="values(" separator="),(" close=")" nullable="true">
-            #{item.userShoppingOrderId}, #{item.sellingGoodsInfoId}, #{item.shopInfoId}, #{item.skuId}, #{item.buyNum}, #{item.goodsSinglePrice}, #{item.orderPrice}, #{item.goodsSystemSinglePrice}, #{item.orderSystemPrice}, #{item.freightAmount}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark}
+            #{item.userShoppingOrderId}, #{item.sellingGoodsInfoId}, #{item.shopInfoId}, #{item.skuId}, #{item.buyNum}, #{item.goodsSinglePrice}, #{item.orderPrice}, #{item.goodsSystemSinglePrice}, #{item.orderSystemPrice}, #{item.freightAmount}, #{item.orderStatus}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark}
         </foreach>
     </insert>
 
@@ -202,7 +215,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="buyNum != null">buy_num = #{buyNum},</if>
             <if test="goodsSinglePrice != null">goods_single_price = #{goodsSinglePrice},</if>
             <if test="orderPrice != null">order_price = #{orderPrice},</if>
+            <if test="orderSystemPrice != null">order_system_price = #{orderSystemPrice},</if>
             <if test="freightAmount != null">freight_amount = #{freightAmount},</if>
+            <if test="orderStatus != null">order_status = #{orderStatus},</if>
+            <if test="afterSaleStatus != null">after_sale_status = #{afterSaleStatus},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

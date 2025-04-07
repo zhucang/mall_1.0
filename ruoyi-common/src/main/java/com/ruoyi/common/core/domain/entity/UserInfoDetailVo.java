@@ -51,28 +51,6 @@ public class UserInfoDetailVo extends BaseEntity {
     @Excel(name = "真实名称")
     private String realName;
 
-    /** 分页页数 */
-    private Integer pageNum;
-
-    /** 分页每页数量 */
-    private Integer pageSize;
-
-    public Integer getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public String getUserAccount() {
         return userAccount;
     }

@@ -111,19 +111,5 @@ public class ApiUserShoppingOrderController extends BaseController
         return toAjax(userShoppingOrderService.sellerSubmitOrderToPlatform(userShoppingOrders));
     }
 
-    /**
-     * 用户申请退款
-     */
-    @Log(title = "用户申请退款", businessType = BusinessType.UPDATE)
-    @RepeatSubmit
-    @PostMapping("/userApplyRefund")
-    public AjaxResult userApplyRefund(@RequestBody UserShoppingOrder userShoppingOrder)
-    {
-        if (userShoppingOrder.getId() == null){
-            throw new LangException(HintConstants.PARAM_NULL,"请选择需要退款的订单");
-        }
-        return toAjax(userShoppingOrderService.userApplyRefund(userShoppingOrder));
-    }
-
 
 }

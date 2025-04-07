@@ -35,6 +35,10 @@ public class UserShoppingOrder extends UserInfoDetailVo
     @Excel(name = "订单金额")
     private BigDecimal orderPrice;
 
+    /** 优惠前订单金额 */
+    @Excel(name = "优惠前订单金额")
+    private BigDecimal orderPriceBeforeDiscount;
+
     /** 订单系统总金额 */
     @Excel(name = "订单系统总金额")
     private BigDecimal orderSystemPrice;
@@ -46,12 +50,18 @@ public class UserShoppingOrder extends UserInfoDetailVo
     /** 快递单号 */
     private String trackingNumber;
 
+    /** 使用的优惠券ID */
+    private Long usedCouponId;
+
+    /** 优惠券金额 */
+    private BigDecimal couponAmount;
+
     /** 收货地址 */
     @Excel(name = "收货地址")
     private String shippingAddress;
 
     /** 订单状态 0：待付款 1：待发货 2：待收货 3：已取消 4：退款/售后 5：待评价 6：交易成功 */
-    @Excel(name = "订单状态 0：待付款 1：待发货 2：待收货 3：已取消 4：退款/售后 5：待评价 6：交易成功")
+    @Excel(name = "订单状态 0：待付款 1：待发货 2：待收货 3：已取消 4：退款/售后 5：待评价 6：交易成功 7：交易关闭")
     private Integer orderStatus;
 
     /** 退款状态 0：未退款 1：申请中 2：退款成功 */
@@ -126,6 +136,14 @@ public class UserShoppingOrder extends UserInfoDetailVo
         return orderPrice;
     }
 
+    public BigDecimal getOrderPriceBeforeDiscount() {
+        return orderPriceBeforeDiscount;
+    }
+
+    public void setOrderPriceBeforeDiscount(BigDecimal orderPriceBeforeDiscount) {
+        this.orderPriceBeforeDiscount = orderPriceBeforeDiscount;
+    }
+
     public BigDecimal getOrderSystemPrice() {
         return orderSystemPrice;
     }
@@ -150,6 +168,22 @@ public class UserShoppingOrder extends UserInfoDetailVo
 
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
+    }
+
+    public Long getUsedCouponId() {
+        return usedCouponId;
+    }
+
+    public void setUsedCouponId(Long usedCouponId) {
+        this.usedCouponId = usedCouponId;
+    }
+
+    public BigDecimal getCouponAmount() {
+        return couponAmount;
+    }
+
+    public void setCouponAmount(BigDecimal couponAmount) {
+        this.couponAmount = couponAmount;
     }
 
     public void setShippingAddress(String shippingAddress)

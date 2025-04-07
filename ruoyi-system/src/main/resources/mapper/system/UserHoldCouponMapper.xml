@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.UserHoldCouponMapper">
+    
+    <resultMap type="UserHoldCoupon" id="UserHoldCouponResult">
+        <result property="userHoldCouponId"    column="user_hold_coupon_id"    />
+        <result property="couponId"    column="coupon_id"    />
+        <result property="couponId"    column="coupon_id"    />
+        <result property="requireAmount"    column="require_amount"    />
+        <result property="couponAmount"    column="coupon_amount"    />
+        <result property="validityStartTime"    column="validity_start_time"    />
+        <result property="validityEndTime"    column="validity_end_time"    />
+        <result property="couponStatus"    column="coupon_status"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="sellerAccount"    column="seller_account"    />
+        <result property="userId"    column="user_id"    />
+        <result property="useStatus"    column="use_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectUserHoldCouponVo">
+        select user_hold_coupon_id, a.coupon_id, require_amount, coupon_amount, validity_start_time, validity_end_time, IF(now() <![CDATA[ < ]]> validity_end_time,coupon_status,2) coupon_status, seller_id, user_account seller_account, user_id, use_status, a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+        from user_hold_coupon a
+                 left join coupon b
+                           on a.coupon_id = b.coupon_id
+                 left join user_info c
+                           on seller_id = c.id
+    </sql>
+
+    <select id="selectUserHoldCouponList" parameterType="UserHoldCoupon" resultMap="UserHoldCouponResult">
+        <include refid="selectUserHoldCouponVo"/>
+        <where>  
+            <if test="couponId != null "> and a.coupon_id = #{couponId}</if>
+            <if test="useStatus != null "> and use_status = #{useStatus}</if>
+            <if test="couponStatus != null "> and coupon_status = #{couponStatus}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="sellerId != null "> and seller_id = #{sellerId}</if>
+            <if test="params.valid != null "> and now() <![CDATA[ < ]]> validity_end_time</if>
+            <if test="params.userHoldCouponIds != null and params.userHoldCouponIds.size > 0">
+                and user_hold_coupon_id in
+                <foreach collection="params.userHoldCouponIds" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.userHoldCouponIds != null and params.userHoldCouponIds.size == 0">
+                and user_hold_coupon_id = 0
+            </if>
+            <if test="params.couponIds != null and params.couponIds.size > 0">
+                and a.coupon_id in
+                <foreach collection="params.couponIds" index="index" item="item" open="(" close=")" separator="," nullable="true">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.couponIds != null and params.couponIds.size == 0">
+                and a.coupon_id = 0
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectUserHoldCouponByUserHoldCouponId" parameterType="Long" resultMap="UserHoldCouponResult">
+        <include refid="selectUserHoldCouponVo"/>
+        where user_hold_coupon_id = #{userHoldCouponId}
+    </select>
+
+    <insert id="insertUserHoldCoupon" parameterType="UserHoldCoupon" useGeneratedKeys="true" keyProperty="userHoldCouponId">
+        insert into user_hold_coupon
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="couponId != null">coupon_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="useStatus != null">use_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="couponId != null">#{couponId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="useStatus != null">#{useStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserHoldCoupon" parameterType="UserHoldCoupon">
+        update user_hold_coupon
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="couponId != null">coupon_id = #{couponId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="useStatus != null">use_status = #{useStatus},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where user_hold_coupon_id = #{userHoldCouponId}
+    </update>
+
+    <delete id="deleteUserHoldCouponByUserHoldCouponId" parameterType="Long">
+        delete from user_hold_coupon where user_hold_coupon_id = #{userHoldCouponId}
+    </delete>
+
+    <delete id="deleteUserHoldCouponByUserHoldCouponIds" parameterType="String">
+        delete from user_hold_coupon where user_hold_coupon_id in 
+        <foreach item="userHoldCouponId" collection="array" open="(" separator="," close=")">
+            #{userHoldCouponId}
+        </foreach>
+    </delete>
+</mapper>

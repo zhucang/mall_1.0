@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//en"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WebBackgroundMapper">
+
+
+    <select id="systemHomePageReport" resultType="java.util.Map">
+        select IFNULL(sum(order_price),0) salesAmount, count(0) salesVolume, '1' flag from
+            user_shopping_order a
+        where (order_status = 1 or order_status = 2 or order_status = 4 or order_status = 5 or order_status = 6)
+        <if test="sellerId != null">
+            and seller_id = #{sellerId}
+        </if>
+        union
+        select IFNULL(sum(order_price),0) salesAmount, count(0) salesVolume, '2' flag from
+            user_shopping_order a
+        where (order_status = 1 or order_status = 2 or order_status = 4 or order_status = 5 or order_status = 6)
+          and DATE_FORMAT(pay_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+        <if test="sellerId != null">
+            and seller_id = #{sellerId}
+        </if>
+        union
+        select IFNULL(sum(order_price),0) salesAmount, count(0) salesVolume, '3' flag from
+            user_shopping_order a
+        where (order_status = 1 or order_status = 2 or order_status = 4 or order_status = 5 or order_status = 6)
+          and PERIOD_DIFF(DATE_FORMAT(now(),'%Y%m'),DATE_FORMAT(pay_time,'%Y%m')) = 1
+        <if test="sellerId != null">
+            and seller_id = #{sellerId}
+        </if>
+    </select>
+
+    <select id="pastMonthOrderData" resultType="java.util.Map">
+        select a.`month`, IFNULL(volume,0) volume from (
+        SELECT DATE_FORMAT((CURDATE() - INTERVAL 11 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 10 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 9 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 8 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 7 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 6 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 5 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%Y-%m') AS `month`
+        UNION SELECT DATE_FORMAT(CURDATE(), '%Y-%m') AS `month`
+        ) as a
+        left join
+        (
+        select count(0) volume, DATE_FORMAT(pay_time,'%Y-%m') `month`
+        from user_shopping_order
+        where PERIOD_DIFF(DATE_FORMAT(now(),'%Y%m'),DATE_FORMAT(pay_time,'%Y%m')) <![CDATA[ < ]]> 12
+        <if test="orderType == 0">
+            and (order_status = 1 or order_status = 2 or order_status = 4 or order_status = 5 or order_status = 6)
+        </if>
+        <if test="orderType == 1">
+            and order_status = 4 and refund_status = 2
+        </if>
+        <if test="sellerId != null">
+            and seller_id = #{sellerId}
+        </if>
+        group by `month`
+        ) as b
+        on a.`month` = b.`month`
+    </select>
+
+
+</mapper>

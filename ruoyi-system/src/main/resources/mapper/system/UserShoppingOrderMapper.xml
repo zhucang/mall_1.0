@@ -13,9 +13,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="accountType"    column="account_type"    />
         <result property="sellerFlag"    column="seller_flag"    />
         <result property="orderPrice"    column="order_price"    />
+        <result property="orderPriceBeforeDiscount"    column="order_price_before_discount"    />
         <result property="orderSystemPrice"    column="order_system_price"    />
         <result property="freightAmount"    column="freight_amount"    />
         <result property="trackingNumber"    column="tracking_number"    />
+        <result property="usedCouponId"    column="used_coupon_id"    />
+        <result property="couponAmount"    column="coupon_amount"    />
         <result property="shippingAddress"    column="shipping_address"    />
         <result property="orderStatus"    column="order_status"    />
         <result property="refundStatus"    column="refund_status"    />
@@ -34,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUserShoppingOrderVo">
-        select a.id, order_code, user_id, user_account, nick_name, account_type, seller_flag, a.order_price, order_system_price, freight_amount, tracking_number, shipping_address, order_status, refund_status, submit_platform_flag, shop_info_id, seller_id, pay_time, shipping_time, finish_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+        select a.id, order_code, user_id, user_account, nick_name, account_type, seller_flag, a.order_price, order_price_before_discount, order_system_price, freight_amount, tracking_number, used_coupon_id, coupon_amount, shipping_address, order_status, refund_status, submit_platform_flag, shop_info_id, seller_id, pay_time, shipping_time, finish_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark
         from user_shopping_order  a
                  left join user_info b
                            on a.user_id = b.id
@@ -81,9 +84,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderCode != null and orderCode != ''">order_code,</if>
             <if test="userId != null">user_id,</if>
             <if test="orderPrice != null">order_price,</if>
+            <if test="orderPriceBeforeDiscount != null">order_price_before_discount,</if>
             <if test="orderSystemPrice != null">order_system_price,</if>
             <if test="freightAmount != null">freight_amount,</if>
             <if test="trackingNumber != null">tracking_number,</if>
+            <if test="usedCouponId != null">used_coupon_id,</if>
+            <if test="couponAmount != null">coupon_amount,</if>
             <if test="shippingAddress != null and shippingAddress != ''">shipping_address,</if>
             <if test="orderStatus != null">order_status,</if>
             <if test="refundStatus != null">refund_status,</if>
@@ -102,9 +108,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderCode != null and orderCode != ''">#{orderCode},</if>
             <if test="userId != null">#{userId},</if>
             <if test="orderPrice != null">#{orderPrice},</if>
+            <if test="orderPriceBeforeDiscount != null">#{orderPriceBeforeDiscount},</if>
             <if test="orderSystemPrice != null">#{orderSystemPrice},</if>
             <if test="freightAmount != null">#{freightAmount},</if>
             <if test="trackingNumber != null">#{trackingNumber},</if>
+            <if test="usedCouponId != null">#{usedCouponId},</if>
+            <if test="couponAmount != null">#{couponAmount},</if>
             <if test="shippingAddress != null and shippingAddress != ''">#{shippingAddress},</if>
             <if test="orderStatus != null">#{orderStatus},</if>
             <if test="refundStatus != null">#{refundStatus},</if>
@@ -123,9 +132,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertUserShoppingOrders" useGeneratedKeys="true" keyProperty="id">
         insert into user_shopping_order
-        (order_code, user_id, order_price, order_system_price, freight_amount, shipping_address, order_status, shop_info_id, seller_id, pay_time, shipping_time, finish_time, create_by, create_time, update_by, update_time, remark)
+        (order_code, user_id, order_price, order_price_before_discount, order_system_price, freight_amount, shipping_address, order_status, shop_info_id, seller_id, pay_time, shipping_time, finish_time, create_by, create_time, update_by, update_time, remark)
         <foreach collection="list" item="item" index="index" open="values(" separator="),(" close=")" nullable="true">
-            #{item.orderCode}, #{item.userId}, #{item.orderPrice}, #{item.orderSystemPrice}, #{item.freightAmount}, #{item.shippingAddress}, #{item.orderStatus}, #{item.shopInfoId}, #{item.sellerId}, #{item.payTime},#{item.shippingTime},  #{item.finishTime}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime},#{item.remark}
+            #{item.orderCode}, #{item.userId}, #{item.orderPrice}, #{item.orderPriceBeforeDiscount}, #{item.orderSystemPrice}, #{item.freightAmount}, #{item.shippingAddress}, #{item.orderStatus}, #{item.shopInfoId}, #{item.sellerId}, #{item.payTime},#{item.shippingTime},  #{item.finishTime}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime},#{item.remark}
         </foreach>
     </insert>
 
@@ -135,8 +144,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderCode != null and orderCode != ''">order_code = #{orderCode},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="orderPrice != null">order_price = #{orderPrice},</if>
+            <if test="orderSystemPrice != null">order_system_price = #{orderSystemPrice},</if>
+            <if test="orderPriceBeforeDiscount != null">order_price_before_discount = #{orderPriceBeforeDiscount},</if>
             <if test="freightAmount != null">freight_amount = #{freightAmount},</if>
             <if test="trackingNumber != null">tracking_number = #{trackingNumber},</if>
+            <if test="usedCouponId != null">used_coupon_id = #{usedCouponId},</if>
+            <if test="couponAmount != null">coupon_amount = #{couponAmount},</if>
             <if test="shippingAddress != null and shippingAddress != ''">shipping_address = #{shippingAddress},</if>
             <if test="orderStatus != null">order_status = #{orderStatus},</if>
             <if test="refundStatus != null">refund_status = #{refundStatus},</if>

@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//en"
     </resultMap>
 
     <sql id="selectUserRechargeVo">
-        select a.id, user_id,user_account,nick_name,b.account_type,seller_flag,agent_id,agent_name, order_code, recharge_amount, order_status, create_time, pay_time,operator_name, pay_channel_name, pay_channel_id, a.currency_id,currency_name, recharge_img,recharge_msg, user_amount_before, user_amount_after,recharge_method,a.remark,IFNULL(b.remark,"") user_remark,a.sql_version,channel_name,channel_name_en, channel_name_tc, channel_name_de, channel_name_es, channel_name_fr, channel_name_idn, channel_name_jp, channel_name_ko, channel_name_my, channel_name_th, channel_name_vi, channel_name_pt, channel_name_rus, channel_name_blr, channel_name_ida, channel_name_sa, channel_name_ar, channel_name_it, channel_name_tr
+        select a.id, user_id, user_account, nick_name, b.account_type, seller_flag, agent_id, agent_name, order_code, recharge_amount, order_status, create_time, pay_time,operator_name, pay_channel_name, pay_channel_id, a.currency_id,currency_name, recharge_img,recharge_msg, user_amount_before, user_amount_after,recharge_method,a.remark,IFNULL(b.remark,"") user_remark,a.sql_version,channel_name,channel_name_en, channel_name_tc, channel_name_de, channel_name_es, channel_name_fr, channel_name_idn, channel_name_jp, channel_name_ko, channel_name_my, channel_name_th, channel_name_vi, channel_name_pt, channel_name_rus, channel_name_blr, channel_name_ida, channel_name_sa, channel_name_ar, channel_name_it, channel_name_tr
         from user_recharge a
                  left join user_info b
                            on a.user_id = b.id

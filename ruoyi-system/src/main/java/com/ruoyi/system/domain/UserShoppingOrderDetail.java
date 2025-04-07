@@ -64,6 +64,14 @@ public class UserShoppingOrderDetail extends SellingGoodsInfo
     @Excel(name = "运费金额")
     private BigDecimal freightAmount;
 
+    /** 订单状态 0：待付款 1：待发货 2：待收货 3：已取消 4：退款/售后 6：交易成功 */
+    @Excel(name = "订单状态 0：待付款 1：待发货 2：待收货 3：已取消 4：退款/售后 6：交易成功 7：交易关闭")
+    private Integer orderStatus;
+
+    /** 售后状态 0：未售后 1：待审核 2：售后中 3：已拒绝 4：已退款 5：用户撤销 */
+    @Excel(name = "售后状态 0：未售后 1：待审核 2：售后中 3：已拒绝 4：已退款 5：用户撤销")
+    private Integer afterSaleStatus;
+
     /** SKU对应属性 */
     @Excel(name = "SKU对应属性")
     private List<SkuAttrValue> skuAttrValues;
@@ -174,6 +182,22 @@ public class UserShoppingOrderDetail extends SellingGoodsInfo
     @Override
     public void setFreightAmount(BigDecimal freightAmount) {
         this.freightAmount = freightAmount;
+    }
+
+    public Integer getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(Integer orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public Integer getAfterSaleStatus() {
+        return afterSaleStatus;
+    }
+
+    public void setAfterSaleStatus(Integer afterSaleStatus) {
+        this.afterSaleStatus = afterSaleStatus;
     }
 
     public List<SkuAttrValue> getSkuAttrValues() {

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GoodsEvaluationMapper">
+    
+    <resultMap type="GoodsEvaluation" id="GoodsEvaluationResult">
+        <result property="id"    column="id"    />
+        <result property="userShoppingOrderDetailId"    column="user_shopping_order_detail_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userAccount"    column="user_account"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="sellerAccount"    column="seller_account"    />
+        <result property="sellingGoodsInfoId"    column="selling_goods_info_id"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="evaluateContent"    column="evaluate_content"    />
+        <result property="evaluateImg"    column="evaluate_img"    />
+        <result property="score1"    column="score1"    />
+        <result property="score2"    column="score2"    />
+        <result property="score3"    column="score3"    />
+        <result property="evaluateStatus"    column="evaluate_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <collection property="skuAttrValues" ofType="SkuAttrValue" column="{skuId=sku_id}" select="com.ruoyi.system.mapper.SkuAttrValueMapper.selectSkuAttrValueList"/>
+    </resultMap>
+
+    <sql id="selectGoodsEvaluationVo">
+        select a.id, user_shopping_order_detail_id, a.user_id, d.user_account, seller_id, e.user_account seller_account, selling_goods_info_id, goods_name, goods_img, sku_id, evaluate_content, evaluate_img, score1, score2, score3, evaluate_status, a.create_by, a.create_time, a.update_by, a.update_time, a.remark
+        from goods_evaluation a
+                 inner join user_shopping_order_detail b
+                            on user_shopping_order_detail_id = b.id
+                 inner join selling_goods_info c
+                            on selling_goods_info_id = c.id
+                 inner join user_info d
+                            on user_id = d.id
+                 inner join user_info e
+                            on seller_id = e.id
+                 inner join system_goods_info f
+                            on system_goods_info_id = f.id
+    </sql>
+
+    <select id="selectGoodsEvaluationList" parameterType="GoodsEvaluation" resultMap="GoodsEvaluationResult">
+        <include refid="selectGoodsEvaluationVo"/>
+        <where>
+            <if test="userShoppingOrderDetailId != null "> and user_shopping_order_detail_id = #{userShoppingOrderDetailId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="sellerId != null "> and seller_id = #{sellerId}</if>
+            <if test="evaluateContent != null  and evaluateContent != ''"> and evaluate_content like concat('%',#{evaluateContent},'%')</if>
+            <if test="evaluateImg != null  and evaluateImg != ''"> and evaluate_img = #{evaluateImg}</if>
+            <if test="score1 != null "> and score1 = #{score1}</if>
+            <if test="score2 != null "> and score2 = #{score2}</if>
+            <if test="score3 != null "> and score3 = #{score3}</if>
+            <if test="sellingGoodsInfoId != null "> and selling_goods_info_id = #{sellingGoodsInfoId}</if>
+            <if test="evaluateStatus != null "> and evaluate_status = #{evaluateStatus}</if>
+            <if test="startTime !=null ">
+                <![CDATA[   and DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i:%s')>=  DATE_FORMAT(#{startTime}, '%Y-%m-%d %H:%i:%s')   ]]></if>
+            <if test="endTime !=null ">
+                <![CDATA[  and DATE_FORMAT(a.create_time, '%Y-%m-%d %H:%i:%s') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d %H:%i:%s')    ]]></if>
+        </where>
+    </select>
+    
+    <select id="selectGoodsEvaluationById" parameterType="Long" resultMap="GoodsEvaluationResult">
+        <include refid="selectGoodsEvaluationVo"/>
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertGoodsEvaluation" parameterType="GoodsEvaluation" useGeneratedKeys="true" keyProperty="id">
+        insert into goods_evaluation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userShoppingOrderDetailId != null">user_shopping_order_detail_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="evaluateContent != null">evaluate_content,</if>
+            <if test="evaluateImg != null">evaluate_img,</if>
+            <if test="score1 != null">score1,</if>
+            <if test="score2 != null">score2,</if>
+            <if test="score3 != null">score3,</if>
+            <if test="evaluateStatus != null">evaluate_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userShoppingOrderDetailId != null">#{userShoppingOrderDetailId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="evaluateContent != null">#{evaluateContent},</if>
+            <if test="evaluateImg != null">#{evaluateImg},</if>
+            <if test="score1 != null">#{score1},</if>
+            <if test="score2 != null">#{score2},</if>
+            <if test="score3 != null">#{score3},</if>
+            <if test="evaluateStatus != null">#{evaluateStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGoodsEvaluation" parameterType="GoodsEvaluation">
+        update goods_evaluation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userShoppingOrderDetailId != null">user_shopping_order_detail_id = #{userShoppingOrderDetailId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="evaluateContent != null">evaluate_content = #{evaluateContent},</if>
+            <if test="evaluateImg != null">evaluate_img = #{evaluateImg},</if>
+            <if test="score1 != null">score1 = #{score1},</if>
+            <if test="score2 != null">score2 = #{score2},</if>
+            <if test="score3 != null">score3 = #{score3},</if>
+            <if test="evaluateStatus != null">evaluate_status = #{evaluateStatus},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoodsEvaluationById" parameterType="Long">
+        delete from goods_evaluation where id = #{id}
+    </delete>
+
+    <delete id="deleteGoodsEvaluationByIds" parameterType="String">
+        delete from goods_evaluation where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

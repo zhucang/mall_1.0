@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.UserAfterSaleOrderMapper">
+    
+    <resultMap type="UserAfterSaleOrder" id="UserAfterSaleOrderResult">
+        <result property="userAfterSaleOrderId"    column="user_after_sale_order_id"    />
+        <result property="userAfterSaleOrderCode"    column="user_after_sale_order_code"    />
+        <result property="userShoppingOrderId"    column="user_shopping_order_id"    />
+        <result property="userShoppingOrderDetailId"    column="user_shopping_order_detail_id"    />
+        <result property="afterSaleAmount"    column="after_sale_amount"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userAccount"    column="user_account"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="accountType"    column="account_type"    />
+        <result property="agentId"    column="agent_id"    />
+        <result property="agentName"    column="agent_name"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="sellerAccount"    column="seller_account"    />
+        <result property="afterSaleType"    column="after_sale_type"    />
+        <result property="afterSaleStatus"    column="after_sale_status"    />
+        <result property="afterSaleReason"    column="after_sale_reason"    />
+        <result property="userInstructions"    column="user_instructions"    />
+        <result property="userAfterSaleImgs"    column="user_after_sale_imgs"    />
+        <result property="rejectRefundReason"    column="reject_refund_reason"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <collection property="userShoppingOrderDetail" ofType="UserShoppingOrderDetail" column="user_shopping_order_detail_id" select="com.ruoyi.system.mapper.UserShoppingOrderDetailMapper.selectUserShoppingOrderDetailById" />
+    </resultMap>
+
+    <sql id="selectUserAfterSaleOrderVo">
+        select user_after_sale_order_id, user_after_sale_order_code, user_shopping_order_id, user_shopping_order_detail_id, after_sale_amount, after_sale_type, after_sale_status, after_sale_reason, user_instructions, user_after_sale_imgs, reject_refund_reason, a.create_by, a.create_time, a.update_by, a.update_time, a.remark, user_id, c.user_account, seller_id, d.user_account seller_account
+        from user_after_sale_order a
+                 left join user_shopping_order b
+                           on a.user_shopping_order_id = b.id
+                 left join user_info c
+                           on user_id = c.id
+                 left join user_info d
+                           on seller_id = d.id
+    </sql>
+
+    <select id="selectUserAfterSaleOrderList" parameterType="UserAfterSaleOrder" resultMap="UserAfterSaleOrderResult">
+        <include refid="selectUserAfterSaleOrderVo"/>
+        <where>  
+            <if test="userAfterSaleOrderCode != null  and userAfterSaleOrderCode != ''"> and user_after_sale_order_code = #{userAfterSaleOrderCode}</if>
+            <if test="userShoppingOrderId != null "> and user_shopping_order_id = #{userShoppingOrderId}</if>
+            <if test="userShoppingOrderDetailId != null "> and user_shopping_order_detail_id = #{userShoppingOrderDetailId}</if>
+            <if test="afterSaleType != null "> and after_sale_type = #{afterSaleType}</if>
+            <if test="afterSaleStatus != null "> and after_sale_status = #{afterSaleStatus}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userAccount != null "> and user_account like concat('%',#{userAccount},'%') </if>
+            <if test="nickName != null "> and nick_name like concat('%',#{nickName},'%') </if>
+            <if test="accountType != null "> and b.account_type = #{accountType}</if>
+            <if test="sellerFlag != null "> and seller_flag = #{sellerFlag}</if>
+            <if test="agentId != null and params.isAllAgentData != null and params.isAllAgentData == 0">
+                and agent_id in (select user_id from agent_team_level_line where sup_user_id = #{agentId} union select #{agentId})
+            </if>
+            <if test="agentId != null and params.isAllAgentData == null">
+                and agent_id = #{agentId}
+            </if>
+            <if test="sellerId != null "> and seller_id = #{sellerId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserAfterSaleOrderByUserAfterSaleOrderId" parameterType="Long" resultMap="UserAfterSaleOrderResult">
+        <include refid="selectUserAfterSaleOrderVo"/>
+        where user_after_sale_order_id = #{userAfterSaleOrderId}
+    </select>
+
+    <insert id="insertUserAfterSaleOrder" parameterType="UserAfterSaleOrder" useGeneratedKeys="true" keyProperty="userAfterSaleOrderId">
+        insert into user_after_sale_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userAfterSaleOrderCode != null and userAfterSaleOrderCode != ''">user_after_sale_order_code,</if>
+            <if test="userShoppingOrderId != null">user_shopping_order_id,</if>
+            <if test="userShoppingOrderDetailId != null">user_shopping_order_detail_id,</if>
+            <if test="afterSaleAmount != null">after_sale_amount,</if>
+            <if test="afterSaleType != null">after_sale_type,</if>
+            <if test="afterSaleStatus != null">after_sale_status,</if>
+            <if test="afterSaleReason != null">after_sale_reason,</if>
+            <if test="userInstructions != null">user_instructions,</if>
+            <if test="userAfterSaleImgs != null">user_after_sale_imgs,</if>
+            <if test="rejectRefundReason != null">reject_refund_reason,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userAfterSaleOrderCode != null and userAfterSaleOrderCode != ''">#{userAfterSaleOrderCode},</if>
+            <if test="userShoppingOrderId != null">#{userShoppingOrderId},</if>
+            <if test="userShoppingOrderDetailId != null">#{userShoppingOrderDetailId},</if>
+            <if test="afterSaleAmount != null">#{afterSaleAmount},</if>
+            <if test="afterSaleType != null">#{afterSaleType},</if>
+            <if test="afterSaleStatus != null">#{afterSaleStatus},</if>
+            <if test="afterSaleReason != null">#{afterSaleReason},</if>
+            <if test="userInstructions != null">#{userInstructions},</if>
+            <if test="userAfterSaleImgs != null">#{userAfterSaleImgs},</if>
+            <if test="rejectRefundReason != null">#{rejectRefundReason},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserAfterSaleOrder" parameterType="UserAfterSaleOrder">
+        update user_after_sale_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userAfterSaleOrderCode != null and userAfterSaleOrderCode != ''">user_after_sale_order_code = #{userAfterSaleOrderCode},</if>
+            <if test="userShoppingOrderId != null">user_shopping_order_id = #{userShoppingOrderId},</if>
+            <if test="userShoppingOrderDetailId != null">user_shopping_order_detail_id = #{userShoppingOrderDetailId},</if>
+            <if test="afterSaleAmount != null">after_sale_amount = #{afterSaleAmount},</if>
+            <if test="afterSaleType != null">after_sale_type = #{afterSaleType},</if>
+            <if test="afterSaleStatus != null">after_sale_status = #{afterSaleStatus},</if>
+            <if test="afterSaleReason != null">after_sale_reason = #{afterSaleReason},</if>
+            <if test="userInstructions != null">user_instructions = #{userInstructions},</if>
+            <if test="userAfterSaleImgs != null">user_after_sale_imgs = #{userAfterSaleImgs},</if>
+            <if test="rejectRefundReason != null">reject_refund_reason = #{rejectRefundReason},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where user_after_sale_order_id = #{userAfterSaleOrderId}
+    </update>
+
+    <delete id="deleteUserAfterSaleOrderByUserAfterSaleOrderId" parameterType="Long">
+        delete from user_after_sale_order where user_after_sale_order_id = #{userAfterSaleOrderId}
+    </delete>
+
+    <delete id="deleteUserAfterSaleOrderByUserAfterSaleOrderIds" parameterType="String">
+        delete from user_after_sale_order where user_after_sale_order_id in
+        <foreach item="userAfterSaleOrderId" collection="array" open="(" separator="," close=")">
+            #{userAfterSaleOrderId}
+        </foreach>
+    </delete>
+</mapper>

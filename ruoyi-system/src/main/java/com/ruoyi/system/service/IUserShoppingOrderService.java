@@ -111,13 +111,6 @@ public interface IUserShoppingOrderService
     public int sellerSubmitOrderToPlatform(List<UserShoppingOrder> userShoppingOrders);
 
     /**
-     * 用户申请退款
-     * @param userShoppingOrder
-     * @return
-     */
-    public int userApplyRefund(UserShoppingOrder userShoppingOrder);
-
-    /**
      * 后台购物订单退款审核
      * @param userShoppingOrder
      * @return
